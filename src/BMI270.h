@@ -31,6 +31,7 @@ class BMI270 {
     public:
 
         BMI270(TwoWire& wire)
+            : BMI270()
         {
             _wire = &wire;
 
@@ -42,15 +43,6 @@ class BMI270 {
 
         void begin() 
         {
-            _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
-            _bmi2.delay_us = bmi2_delay_us;
-            _bmi2.intf = BMI2_I2C_INTF;
-            _bmi2.intf_ptr = &_accel_gyro_dev_info;
-            _bmi2.read_write_len = 30; // Limitation of the Wire library
-            _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
-
-            _accel_gyro_dev_info.dev_addr = _bmi2.chip_id;
-
             int8_t rslt = bmi270_init(&_bmi2);
             checkResult(rslt);
 
@@ -146,6 +138,19 @@ class BMI270 {
         struct bmi2_dev _bmi2;
 
         uint16_t _int_status;
+
+        BMI270(void)
+        {
+            _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
+            _bmi2.delay_us = bmi2_delay_us;
+            _bmi2.intf = BMI2_I2C_INTF;
+            _bmi2.intf_ptr = &_accel_gyro_dev_info;
+            _bmi2.read_write_len = 30; // Limitation of the Wire library
+            _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
+
+            _accel_gyro_dev_info.dev_addr = _bmi2.chip_id;
+        }
+
 
         bool dataAvailable(const uint16_t mask) 
         {
