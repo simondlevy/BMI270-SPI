@@ -36,7 +36,7 @@ class BMI270 {
             _bmi2.read = i2c_read;
             _bmi2.write = i2c_write;
 
-            _dev_info._wire = &wire;
+            _dev_info.wire = &wire;
         }
 
         void begin() 
@@ -122,7 +122,7 @@ class BMI270 {
     private:
 
         typedef struct {
-            TwoWire* _wire;
+            TwoWire* wire;
             uint8_t i2c_addr;
         } device_info_t;
 
@@ -210,14 +210,14 @@ class BMI270 {
             device_info_t* dev_info = (device_info_t*)intf_ptr;
             uint8_t dev_id = dev_info->i2c_addr;
 
-            dev_info->_wire->beginTransmission(dev_id);
-            dev_info->_wire->write(reg_addr);
-            if (dev_info->_wire->endTransmission() == 0) {
-                bytes_received = dev_info->_wire->requestFrom(dev_id, len);
+            dev_info->wire->beginTransmission(dev_id);
+            dev_info->wire->write(reg_addr);
+            if (dev_info->wire->endTransmission() == 0) {
+                bytes_received = dev_info->wire->requestFrom(dev_id, len);
                 // Optionally, throw an error if bytes_received != len
                 for (uint16_t i = 0; i < bytes_received; i++)
                 {
-                    reg_data[i] = dev_info->_wire->read();
+                    reg_data[i] = dev_info->wire->read();
                 }
             } else {
                 return -1;
@@ -235,13 +235,13 @@ class BMI270 {
 
             device_info_t* dev_info = (device_info_t*)intf_ptr;
             uint8_t dev_id = dev_info->i2c_addr;
-            dev_info->_wire->beginTransmission(dev_id);
-            dev_info->_wire->write(reg_addr);
+            dev_info->wire->beginTransmission(dev_id);
+            dev_info->wire->write(reg_addr);
             for (uint16_t i = 0; i < len; i++)
             {
-                dev_info->_wire->write(reg_data[i]);
+                dev_info->wire->write(reg_data[i]);
             }
-            if (dev_info->_wire->endTransmission() != 0) {
+            if (dev_info->wire->endTransmission() != 0) {
                 return -1;
             }
 
