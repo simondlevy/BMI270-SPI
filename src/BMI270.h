@@ -123,7 +123,7 @@ class BMI270 {
 
         typedef struct {
             TwoWire* _wire;
-            uint8_t dev_addr;
+            uint8_t i2c_addr;
         } device_info_t;
 
         device_info_t _dev_info;
@@ -141,7 +141,7 @@ class BMI270 {
             _bmi2.read_write_len = 30; // Limitation of the Wire library
             _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
 
-            _dev_info.dev_addr = _bmi2.chip_id;
+            _dev_info.i2c_addr = _bmi2.chip_id;
         }
 
         bool dataAvailable(const uint16_t mask) 
@@ -208,7 +208,7 @@ class BMI270 {
             uint8_t bytes_received;
 
             device_info_t* dev_info = (device_info_t*)intf_ptr;
-            uint8_t dev_id = dev_info->dev_addr;
+            uint8_t dev_id = dev_info->i2c_addr;
 
             dev_info->_wire->beginTransmission(dev_id);
             dev_info->_wire->write(reg_addr);
@@ -234,7 +234,7 @@ class BMI270 {
             }
 
             device_info_t* dev_info = (device_info_t*)intf_ptr;
-            uint8_t dev_id = dev_info->dev_addr;
+            uint8_t dev_id = dev_info->i2c_addr;
             dev_info->_wire->beginTransmission(dev_id);
             dev_info->_wire->write(reg_addr);
             for (uint16_t i = 0; i < len; i++)
