@@ -43,11 +43,8 @@ class BMI270 {
 
         void begin() 
         {
-            int8_t rslt = bmi270_init(&_bmi2);
-            checkResult(rslt);
-
-            rslt = configure_sensor(&_bmi2);
-            checkResult(rslt);
+            checkResult(bmi270_init(&_bmi2));
+            checkResult(configure_sensor(&_bmi2));
         }
 
         void readAcceleration(int16_t& x, int16_t& y, int16_t& z) 
