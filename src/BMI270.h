@@ -39,6 +39,16 @@ class BMI270 {
             _dev_info.wire = &wire;
         }
 
+        BMI270(SPIClass & spi, const uint8_t csPin)
+            : BMI270()
+        {
+            _bmi2.read = spi_read;
+            _bmi2.write = spi_write;
+
+            _dev_info.spi = &spi;
+            _dev_info.csPin = csPin;
+        }
+
         void begin() 
         {
             checkResult(bmi270_init(&_bmi2));
@@ -122,8 +132,10 @@ class BMI270 {
     private:
 
         typedef struct {
-            TwoWire* wire;
+            TwoWire * wire;
             uint8_t i2c_addr;
+            SPIClass * spi;
+            uint8_t csPin;
         } device_info_t;
 
         device_info_t _dev_info;
@@ -248,7 +260,29 @@ class BMI270 {
             return 0;
         }
 
-        static void bmi2_delay_us(uint32_t period, void *intf_ptr)
+        static int8_t spi_read(
+                uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
+        {
+            (void)reg_addr;
+            (void)reg_data;
+            (void)len;
+            (void)intf_ptr;
+
+            return 0;
+        }
+
+        static int8_t spi_write(
+                uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
+        {
+            (void)reg_addr;
+            (void)reg_data;
+            (void)len;
+            (void)intf_ptr;
+
+            return 0;
+        }
+
+         static void bmi2_delay_us(uint32_t period, void *intf_ptr)
         {
             delayMicroseconds(period);
         }
