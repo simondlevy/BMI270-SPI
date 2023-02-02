@@ -131,6 +131,9 @@ class BMI270 {
 
     private:
 
+        static const uint32_t SPI_INIT_CLK_HZ = 1000000;
+        static const uint32_t SPI_CLK_HZ      = 8000000;
+
         typedef struct {
             TwoWire * wire;
             uint8_t i2c_addr;
@@ -212,9 +215,9 @@ class BMI270 {
         }
 
         static int8_t i2c_read(
-                uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
+                uint8_t addr, uint8_t *data, uint32_t len, void *intf_ptr)
         {
-            if ((reg_data == NULL) || (len == 0) || (len > 32)) {
+            if ((data == NULL) || (len == 0) || (len > 32)) {
                 return -1;
             }
             uint8_t bytes_received;
@@ -223,13 +226,13 @@ class BMI270 {
             uint8_t dev_id = dev_info->i2c_addr;
 
             dev_info->wire->beginTransmission(dev_id);
-            dev_info->wire->write(reg_addr);
+            dev_info->wire->write(addr);
             if (dev_info->wire->endTransmission() == 0) {
                 bytes_received = dev_info->wire->requestFrom(dev_id, len);
                 // Optionally, throw an error if bytes_received != len
                 for (uint16_t i = 0; i < bytes_received; i++)
                 {
-                    reg_data[i] = dev_info->wire->read();
+                    data[i] = dev_info->wire->read();
                 }
             } else {
                 return -1;
@@ -239,19 +242,19 @@ class BMI270 {
         }
 
         static int8_t i2c_write(
-                uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
+                uint8_t addr, const uint8_t *data, uint32_t len, void *intf_ptr)
         {
-            if ((reg_data == NULL) || (len == 0) || (len > 32)) {
+            if ((data == NULL) || (len == 0) || (len > 32)) {
                 return -1;
             }
 
             device_info_t* dev_info = (device_info_t*)intf_ptr;
             uint8_t dev_id = dev_info->i2c_addr;
             dev_info->wire->beginTransmission(dev_id);
-            dev_info->wire->write(reg_addr);
+            dev_info->wire->write(addr);
             for (uint16_t i = 0; i < len; i++)
             {
-                dev_info->wire->write(reg_data[i]);
+                dev_info->wire->write(data[i]);
             }
             if (dev_info->wire->endTransmission() != 0) {
                 return -1;
@@ -261,24 +264,42 @@ class BMI270 {
         }
 
         static int8_t spi_read(
-                uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
+                uint8_t addr, uint8_t *data, uint32_t len, void *intf_ptr)
         {
-            (void)reg_addr;
-            (void)reg_data;
-            (void)len;
-            (void)intf_ptr;
+            device_info_t* dev_info = (device_info_t*)intf_ptr;
+            uint8_t csPin = dev_info->csPin;
 
+            dev_info->spi->beginTransaction(SPISettings(SPI_CLK_HZ, MSBFIRST, SPI_MODE3));
+
+            digitalWrite(csPin, LOW);
+
+            data[0] = addr | 0x80;
+            dev_info->spi->transfer(data, len+1);
+
+            digitalWrite(csPin, HIGH);
+
+            dev_info->spi->endTransaction();
+ 
             return 0;
         }
 
         static int8_t spi_write(
-                uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
+                uint8_t addr, const uint8_t *data, uint32_t len, void *intf_ptr)
         {
-            (void)reg_addr;
-            (void)reg_data;
-            (void)len;
-            (void)intf_ptr;
 
+            device_info_t* dev_info = (device_info_t*)intf_ptr;
+            uint8_t csPin = dev_info->csPin;
+
+            dev_info->spi->beginTransaction(
+                    SPISettings(SPI_INIT_CLK_HZ, MSBFIRST, SPI_MODE3)); 
+
+            digitalWrite(csPin, LOW);
+            dev_info->spi->transfer(addr);
+            dev_info->spi->transfer((void *)data, len);
+            digitalWrite(csPin, HIGH);
+
+            dev_info->spi->endTransaction(); 
+ 
             return 0;
         }
 

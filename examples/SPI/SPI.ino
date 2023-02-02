@@ -1,5 +1,5 @@
 /*
-   BMI270 SPI example
+   BMI270 I^2C example
 
    This file is part of the BMI270 library.
 
@@ -26,10 +26,12 @@
 // Set to 0 for continuous polling
 static const uint8_t INTERRUPT_PIN = 10;
 
+static const uint8_t CHIP_SELECT_PIN = 11;
+
 // LED will blink when sensor is connected
 static const uint8_t LED_PIN = 13;
 
-BMI270 imu = BMI270(Wire);
+BMI270 imu = BMI270(SPI, CHIP_SELECT_PIN);
 
 static bool gotInterrupt;
 
@@ -71,35 +73,27 @@ void setup()
 
 static void report(void)
 {
-    if (imu.accelerationAvailable()) {
+    int16_t ax=0, ay=0, az=0;
+    imu.readAccel(ax, ay, az);
 
-        int16_t x, y, z;
+    int16_t gx=0, gy=0, gz=0;
+    imu.readGyro(gx, gy, gz);
 
-        imu.readAcceleration(x, y, z);
+    Serial.print("ax=");
+    Serial.print(ax);
+    Serial.print("  ay=");
+    Serial.print(ay);
+    Serial.print("  az=");
+    Serial.print(az);
 
-        Serial.print("accel: \t");
-        Serial.print(x);
-        Serial.print('\t');
-        Serial.print(y);
-        Serial.print('\t');
-        Serial.print(z);
-        Serial.println();
-    }
+    Serial.print("  gx=");
+    Serial.print(gx);
+    Serial.print("  gy=");
+    Serial.print(gy);
+    Serial.print("  gz=");
+    Serial.print(gz);
 
-    if (imu.gyroscopeAvailable()) {
-
-        int16_t x, y, z;
-
-        imu.readGyroscope(x, y, z);
-
-        Serial.print("gyro: \t");
-        Serial.print(x);
-        Serial.print('\t');
-        Serial.print(y);
-        Serial.print('\t');
-        Serial.print(z);
-        Serial.println();
-    }
+    Serial.println();
 }
 
 void loop() 
