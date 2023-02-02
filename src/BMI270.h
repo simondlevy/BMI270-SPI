@@ -33,12 +33,10 @@ class BMI270 {
         BMI270(TwoWire& wire)
             : BMI270()
         {
-            _wire = &wire;
-
             _bmi2.read = i2c_read;
             _bmi2.write = i2c_write;
 
-            _accel_gyro_dev_info._wire = _wire;
+            _accel_gyro_dev_info._wire = &wire;
         }
 
         void begin() 
@@ -128,8 +126,6 @@ class BMI270 {
             uint8_t dev_addr;
         } i2c_info_t;
 
-        TwoWire* _wire;
-
         i2c_info_t _accel_gyro_dev_info;
 
         struct bmi2_dev _bmi2;
@@ -147,7 +143,6 @@ class BMI270 {
 
             _accel_gyro_dev_info.dev_addr = _bmi2.chip_id;
         }
-
 
         bool dataAvailable(const uint16_t mask) 
         {
@@ -203,7 +198,6 @@ class BMI270 {
 
             return rslt;
         }
-
 
         static int8_t i2c_read(
                 uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
