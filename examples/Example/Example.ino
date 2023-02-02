@@ -69,7 +69,7 @@ static void report(void)
 {
     if (imu.accelerationAvailable()) {
 
-        float x, y, z;
+        int16_t x, y, z;
 
         imu.readAcceleration(x, y, z);
 
@@ -84,7 +84,7 @@ static void report(void)
 
     if (imu.gyroscopeAvailable()) {
 
-        float x, y, z;
+        int16_t x, y, z;
 
         imu.readGyroscope(x, y, z);
 

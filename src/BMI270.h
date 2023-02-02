@@ -57,7 +57,7 @@ class BMI270 {
             checkResult(rslt);
         }
 
-        void readAcceleration(float& x, float& y, float& z) 
+        void readAcceleration(int16_t& x, int16_t& y, int16_t& z) 
         {
             struct bmi2_sens_data sensor_data;
             bmi2_get_sensor_data(&sensor_data, &_bmi2);
@@ -66,7 +66,7 @@ class BMI270 {
             z = sensor_data.acc.z;
         }
 
-        void readGyroscope(float& x, float& y, float& z) 
+        void readGyroscope(int16_t& x, int16_t& y, int16_t& z) 
         {
             struct bmi2_sens_data sensor_data;
             bmi2_get_sensor_data(&sensor_data, &_bmi2);
