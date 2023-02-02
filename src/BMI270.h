@@ -33,20 +33,22 @@ class BMI270 {
         BMI270(TwoWire& wire)
         {
             _wire = &wire;
+
+            _bmi2.read = i2c_read;
+            _bmi2.write = i2c_write;
+
+            _accel_gyro_dev_info._wire = _wire;
         }
 
         void begin() 
         {
             _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
-            _bmi2.read = bmi2_i2c_read;
-            _bmi2.write = bmi2_i2c_write;
             _bmi2.delay_us = bmi2_delay_us;
             _bmi2.intf = BMI2_I2C_INTF;
             _bmi2.intf_ptr = &_accel_gyro_dev_info;
             _bmi2.read_write_len = 30; // Limitation of the Wire library
             _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
 
-            _accel_gyro_dev_info._wire = _wire;
             _accel_gyro_dev_info.dev_addr = _bmi2.chip_id;
 
             int8_t rslt = bmi270_init(&_bmi2);
@@ -201,7 +203,7 @@ class BMI270 {
         }
 
 
-        static int8_t bmi2_i2c_read(
+        static int8_t i2c_read(
                 uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
         {
             if ((reg_data == NULL) || (len == 0) || (len > 32)) {
@@ -228,7 +230,7 @@ class BMI270 {
             return 0;
         }
 
-        static int8_t bmi2_i2c_write(
+        static int8_t i2c_write(
                 uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
         {
             if ((reg_data == NULL) || (len == 0) || (len > 32)) {
