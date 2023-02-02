@@ -22,6 +22,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <SPI.h>
 
 #include "api/bmi270.h"
 
@@ -29,15 +30,13 @@ class BMI270 {
 
     public:
 
-        BMI270(TwoWire& wire = Wire)
+        BMI270(TwoWire& wire)
         {
             _wire = &wire;
         }
 
         void begin() 
         {
-            _wire->begin();
-
             _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
             _bmi2.read = bmi2_i2c_read;
             _bmi2.write = bmi2_i2c_write;

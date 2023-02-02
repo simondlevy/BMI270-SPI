@@ -1,4 +1,6 @@
 /*
+   BMI270 SPI example
+
    This file is part of the BMI270 library.
 
    Copyright (c) 2019,2023 Arduino SA and Simon D. Levy. 
@@ -27,7 +29,7 @@ static const uint8_t INTERRUPT_PIN = 10;
 // LED will blink when sensor is connected
 static const uint8_t LED_PIN = 13;
 
-BMI270 imu;
+BMI270 imu = BMI270(Wire);
 
 static bool gotInterrupt;
 
@@ -61,6 +63,8 @@ void setup()
         attachInterrupt(INTERRUPT_PIN, handleInterrupt, RISING);
         imu.enableInterrupts();
     }
+
+    Wire.begin();
 
     imu.begin();
 }
