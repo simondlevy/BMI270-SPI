@@ -36,7 +36,7 @@ class BMI270 {
             _bmi2.read = i2c_read;
             _bmi2.write = i2c_write;
 
-            _accel_gyro_dev_info._wire = &wire;
+            _dev_info._wire = &wire;
         }
 
         void begin() 
@@ -124,9 +124,9 @@ class BMI270 {
         typedef struct {
             TwoWire* _wire;
             uint8_t dev_addr;
-        } i2c_info_t;
+        } device_info_t;
 
-        i2c_info_t _accel_gyro_dev_info;
+        device_info_t _dev_info;
 
         struct bmi2_dev _bmi2;
 
@@ -137,11 +137,11 @@ class BMI270 {
             _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
             _bmi2.delay_us = bmi2_delay_us;
             _bmi2.intf = BMI2_I2C_INTF;
-            _bmi2.intf_ptr = &_accel_gyro_dev_info;
+            _bmi2.intf_ptr = &_dev_info;
             _bmi2.read_write_len = 30; // Limitation of the Wire library
             _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
 
-            _accel_gyro_dev_info.dev_addr = _bmi2.chip_id;
+            _dev_info.dev_addr = _bmi2.chip_id;
         }
 
         bool dataAvailable(const uint16_t mask) 
@@ -207,7 +207,7 @@ class BMI270 {
             }
             uint8_t bytes_received;
 
-            i2c_info_t* dev_info = (i2c_info_t*)intf_ptr;
+            device_info_t* dev_info = (device_info_t*)intf_ptr;
             uint8_t dev_id = dev_info->dev_addr;
 
             dev_info->_wire->beginTransmission(dev_id);
@@ -233,7 +233,7 @@ class BMI270 {
                 return -1;
             }
 
-            i2c_info_t* dev_info = (i2c_info_t*)intf_ptr;
+            device_info_t* dev_info = (device_info_t*)intf_ptr;
             uint8_t dev_id = dev_info->dev_addr;
             dev_info->_wire->beginTransmission(dev_id);
             dev_info->_wire->write(reg_addr);
