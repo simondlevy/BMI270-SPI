@@ -47,7 +47,7 @@ class BMI270 {
             checkResult(configure_sensor(&_bmi2));
         }
 
-        void readAcceleration(int16_t& x, int16_t& y, int16_t& z) 
+        void readAccel(int16_t& x, int16_t& y, int16_t& z) 
         {
             struct bmi2_sens_data sensor_data;
             bmi2_get_sensor_data(&sensor_data, &_bmi2);
@@ -56,7 +56,7 @@ class BMI270 {
             z = sensor_data.acc.z;
         }
 
-        void readGyroscope(int16_t& x, int16_t& y, int16_t& z) 
+        void readGyro(int16_t& x, int16_t& y, int16_t& z) 
         {
             struct bmi2_sens_data sensor_data;
             bmi2_get_sensor_data(&sensor_data, &_bmi2);
@@ -65,12 +65,12 @@ class BMI270 {
             z = sensor_data.gyr.z;
         }
 
-        bool accelerationAvailable() 
+        bool accelAvailable() 
         {
             return dataAvailable(BMI2_ACC_DRDY_INT_MASK);
         }
 
-        bool gyroscopeAvailable() 
+        bool gyroAvailable() 
         {
             return dataAvailable(BMI2_GYR_DRDY_INT_MASK);
         }

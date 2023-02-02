@@ -71,35 +71,27 @@ void setup()
 
 static void report(void)
 {
-    if (imu.accelerationAvailable()) {
+    int16_t ax=0, ay=0, az=0;
+    imu.readAccel(ax, ay, az);
 
-        int16_t x, y, z;
+    int16_t gx=0, gy=0, gz=0;
+    imu.readGyro(gx, gy, gz);
 
-        imu.readAcceleration(x, y, z);
+    Serial.print("ax=");
+    Serial.print(ax);
+    Serial.print("  ay=");
+    Serial.print(ay);
+    Serial.print("  az=");
+    Serial.print(az);
 
-        Serial.print("accel: \t");
-        Serial.print(x);
-        Serial.print('\t');
-        Serial.print(y);
-        Serial.print('\t');
-        Serial.print(z);
-        Serial.println();
-    }
+    Serial.print("  gx=");
+    Serial.print(gx);
+    Serial.print("  gy=");
+    Serial.print(gy);
+    Serial.print("  gz=");
+    Serial.print(gz);
 
-    if (imu.gyroscopeAvailable()) {
-
-        int16_t x, y, z;
-
-        imu.readGyroscope(x, y, z);
-
-        Serial.print("gyro: \t");
-        Serial.print(x);
-        Serial.print('\t');
-        Serial.print(y);
-        Serial.print('\t');
-        Serial.print(z);
-        Serial.println();
-    }
+    Serial.println();
 }
 
 void loop() 
