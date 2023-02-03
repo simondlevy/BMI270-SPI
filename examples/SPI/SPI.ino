@@ -6,7 +6,6 @@
 #include <BMI270.h>
 
 static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
-static struct bmi2_dev bmi2;
 
 static const uint8_t INT_PIN = 22;
 
@@ -26,10 +25,10 @@ static BMI270 imu;
 
 static void BMI270_Init()
 {
-    BMI270::checkResult(bmi270_init(&bmi2), "bmi270_init");
+    BMI270::checkResult(bmi270_init(&imu.bmi2), "bmi270_init");
 
     BMI270::checkResult(
-            bmi2_set_sensor_config(imu.config, 2, &bmi2), "bmi2_set_sensor_config");
+            bmi2_set_sensor_config(imu.config, 2, &imu.bmi2), "bmi2_set_sensor_config");
 }
 
 void setup() {
@@ -40,19 +39,19 @@ void setup() {
 
     imu.begin();
 
-    bmi2.intf = BMI2_SPI_INTF;
-    bmi2.read = BMI270::read_spi;
-    bmi2.write = BMI270::write_spi;
-    bmi2.read_write_len = 32;
-    bmi2.delay_us = delay_usec;
+    imu.bmi2.intf = BMI2_SPI_INTF;
+    imu.bmi2.read = BMI270::read_spi;
+    imu.bmi2.write = BMI270::write_spi;
+    imu.bmi2.read_write_len = 32;
+    imu.bmi2.delay_us = delay_usec;
 
     /* Config file pointer should be assigned to NULL, so that default file
      * address is assigned in bmi270_init */
-    bmi2.config_file_ptr = NULL;
+    imu.bmi2.config_file_ptr = NULL;
 
     BMI270_Init();
-    
-    BMI270::checkResult(bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
+
+    BMI270::checkResult(bmi2_sensor_enable(sens_list, 2, &imu.bmi2), "bmi2_sensor_enable");
 
     // Interrupt PINs configuration
     struct bmi2_int_pin_config data_int_cfg;
@@ -63,9 +62,9 @@ void setup() {
     data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
     data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
 
-    BMI270::checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
+    BMI270::checkResult(bmi2_set_int_pin_config(&data_int_cfg, &imu.bmi2), "bmi2_set_int_pin_config");
     
-    BMI270::checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2), "bmi2_map_data_int");
+    BMI270::checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &imu.bmi2), "bmi2_map_data_int");
 
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
@@ -78,7 +77,7 @@ void loop()
 
         struct bmi2_sens_data sensor_data;
 
-        bmi2_get_sensor_data(&sensor_data, &bmi2);
+        bmi2_get_sensor_data(&sensor_data, &imu.bmi2);
 
         auto ax = sensor_data.acc.x;
         auto ay = sensor_data.acc.y;

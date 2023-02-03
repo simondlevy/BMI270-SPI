@@ -11,6 +11,7 @@ class BMI270 {
     public:
 
         struct bmi2_sens_config config[3];
+        struct bmi2_dev bmi2;
 
         BMI270(void)
         {
