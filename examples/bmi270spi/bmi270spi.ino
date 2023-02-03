@@ -2,9 +2,8 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include "bmi2_defs.h"
-#include "bmi2.h"
-#include "bmi270.h"
+
+#include <BMI270.h>
 
 #define CONFIG_INT_WDT_CHECK_CPU0 0
 
