@@ -8,8 +8,6 @@
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
 
-static uint8_t sens_int = BMI2_DRDY_INT;
-
 static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
 /* Structure to define BMI2 sensor configurations */
@@ -19,12 +17,10 @@ static struct bmi2_dev bmi2;
 /* Structure to define the type of the sensor and its configurations */
 static struct bmi2_sens_config config[3];
 
-void bmi2xy_hal_delay_usec(uint32_t period_us, void *intf_ptr)
+static void delay_usec(uint32_t period_us, void *intf_ptr)
 {
     delayMicroseconds(period_us);
 }
-
-
 
 static bool gotInterrupt;
 
@@ -75,12 +71,11 @@ void setup() {
 
     SPI.begin();
 
-    //bmi2.intf_ptr = &spi_bus;
     bmi2.intf = BMI2_SPI_INTF;
     bmi2.read = BMI270::read_spi;
     bmi2.write = BMI270::write_spi;
     bmi2.read_write_len = 32;
-    bmi2.delay_us = bmi2xy_hal_delay_usec;
+    bmi2.delay_us = delay_usec;
 
     /* Config file pointer should be assigned to NULL, so that default file
      * address is assigned in bmi270_init */
@@ -101,7 +96,7 @@ void setup() {
 
     BMI270::checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
     
-    BMI270::checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
+    BMI270::checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2), "bmi2_map_data_int");
 
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
