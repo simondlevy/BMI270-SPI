@@ -5,10 +5,9 @@
 
 #include <BMI270.h>
 
-#define CONFIG_INT_WDT_CHECK_CPU0 0
-
+//#define CONFIG_INT_WDT_CHECK_CPU0 0
 /*! SPI interface communication, 1 - Enable; 0- Disable */
-#define BMI270_INTERFACE_SPI UINT8_C(1)
+//#define BMI270_INTERFACE_SPI UINT8_C(1)
 
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
@@ -194,5 +193,3 @@ void loop()
 
     delay(10);
 }
-
-
