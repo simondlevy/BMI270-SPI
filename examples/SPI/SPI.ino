@@ -52,10 +52,6 @@ static void BMI270_Init()
 
 void setup() {
 
-    // Configure type of feature 
-    imu.config[0].type = BMI2_ACCEL;
-    imu.config[1].type = BMI2_GYRO;
-
     Serial.begin(115200);
 
     SPI.begin();

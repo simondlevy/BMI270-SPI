@@ -12,6 +12,12 @@ class BMI270 {
 
         struct bmi2_sens_config config[3];
 
+        BMI270(void)
+        {
+            config[0].type = BMI2_ACCEL;
+            config[1].type = BMI2_GYRO;
+        }
+
         void begin(void)
         {
             pinMode(CS_PIN, OUTPUT);
