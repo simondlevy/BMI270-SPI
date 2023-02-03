@@ -24,10 +24,7 @@
 #include "BMI270.h"
 
 // Set to 0 for continuous polling
-static const uint8_t INTERRUPT_PIN = 10;
-
-// LED will blink when sensor is connected
-static const uint8_t LED_PIN = 13;
+static const uint8_t INTERRUPT_PIN = 14;
 
 BMI270 imu = BMI270(Wire);
 
@@ -38,25 +35,9 @@ static void handleInterrupt(void)
     gotInterrupt = true;
 }
 
-static void blinkLed(void)
-{
-    const auto msec = millis();
-    static uint32_t prev;
-
-    if (msec - prev > 500) {
-        static bool on;
-        digitalWrite(LED_PIN, on);
-        on = !on;
-        prev = msec;
-    }
-
-}
-
 void setup() 
 {
     Serial.begin(115200);
-
-    pinMode(LED_PIN, OUTPUT);
 
     if (INTERRUPT_PIN > 0) {
         pinMode(INTERRUPT_PIN, INPUT);
@@ -103,6 +84,4 @@ void loop()
         report();
 
     }
-
-    blinkLed();
 }

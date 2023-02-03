@@ -295,7 +295,7 @@ class BMI270 {
 
             digitalWrite(csPin, LOW);
             dev_info->spi->transfer(addr);
-            dev_info->spi->transfer((void *)data, len);
+            //dev_info->spi->transfer((void *)data, len);
             digitalWrite(csPin, HIGH);
 
             dev_info->spi->endTransaction(); 
@@ -306,18 +306,6 @@ class BMI270 {
          static void bmi2_delay_us(uint32_t period, void *intf_ptr)
         {
             delayMicroseconds(period);
-        }
-
-        static void panic_led_trap(void)
-        {
-            pinMode(LED_BUILTIN, OUTPUT);
-            while (1)
-            {
-                digitalWrite(LED_BUILTIN, LOW);
-                delay(100);
-                digitalWrite(LED_BUILTIN, HIGH);
-                delay(100);
-            }
         }
 
         static void reportForever(const int8_t rslt, const char * msg)
