@@ -15,19 +15,11 @@ static const uint8_t INT_PIN = 22;
 
 static uint8_t spi_bus;
 
-static uint8_t gu8DataFlag;
-
 static uint8_t sens_int = BMI2_DRDY_INT;
 
 /* List the sensors which are required to enable */
 //static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 static uint8_t sens_list[3] = {BMI2_ACCEL, BMI2_GYRO, BMI2_AUX};
-
-/* Create an instance of sensor data structure */
-static struct bmi2_sens_data sensor_data[3];
-
-static uint16_t gu16IntStatus = 0x00;
-static uint8_t gu8Result;
 
 /* Structure to define BMI2 sensor configurations */
 static struct bmi2_dev bmi2;
@@ -167,16 +159,6 @@ void setup() {
 
 void loop() 
 {
-    /*
-    extern uint8_t g_chipId, g_devChipId;
-    Serial.print(g_chipId, HEX);
-    Serial.print(" ");
-    Serial.print(g_devChipId, HEX);
-    Serial.print(" ");
-    Serial.println(interruptCount);*/
-
-    //gu8Result = bmi2_get_int_status(&gu16IntStatus, &bmi2);
-
     if (gotInterrupt) {
 
         gotInterrupt = false;

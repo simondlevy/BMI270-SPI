@@ -1869,9 +1869,6 @@ static void unpack_virtual_aux_data(struct bmi2_aux_fifo_data *aux,
  * chip-id of the sensor.
  */
 
-uint8_t g_chipId;
-uint8_t g_devChipId;
-
 int8_t bmi2_sec_init(struct bmi2_dev *dev)
 {
     /* Variable to define error */
@@ -1910,9 +1907,6 @@ int8_t bmi2_sec_init(struct bmi2_dev *dev)
                 /* Validate chip-id */
                 if (chip_id == dev->chip_id)
                 {
-                    g_chipId = chip_id;
-                    g_devChipId = dev->chip_id;
-
                     /* Assign resolution to the structure */
                     dev->resolution = 16;
 
