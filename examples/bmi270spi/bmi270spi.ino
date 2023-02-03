@@ -107,13 +107,6 @@ static void BMI270_Init()
     /* Set the accel configurations */
     checkResult(bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
 
-    extern uint8_t g_chipId, g_devChipId;
-
-    while (true) {
-        Serial.print(g_chipId, HEX);
-        Serial.print(" ");
-        Serial.println(g_devChipId, HEX);
-    }
 }
 
 void setup() {
@@ -162,9 +155,12 @@ void setup() {
     checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
 }
 
-void loop() {
-
-    Serial.println(micros());
+void loop() 
+{
+    extern uint8_t g_chipId, g_devChipId;
+    Serial.print(g_chipId, HEX);
+    Serial.print(" ");
+    Serial.println(g_devChipId, HEX);
 
     gu8Result = bmi2_get_int_status(&gu16IntStatus, &bmi2);
 
