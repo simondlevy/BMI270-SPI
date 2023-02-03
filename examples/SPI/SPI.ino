@@ -19,39 +19,6 @@ static struct bmi2_dev bmi2;
 /* Structure to define the type of the sensor and its configurations */
 static struct bmi2_sens_config config[3];
 
-static int8_t BMI270_read_spi(
-        uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
-{
-    uint32_t cnt;
-    int8_t rev = 0;
-    (void)(intf_ptr);
-    reg_addr = 0x80 | reg_addr;
-    digitalWrite(CS_PIN, LOW);
-    SPI.transfer(reg_addr);
-    for (cnt = 0; cnt < length; cnt++)
-    {
-        *(reg_data + cnt) = SPI.transfer(0x00);
-    }
-    digitalWrite(CS_PIN, HIGH);
-    return rev;
-}
-
-static int8_t BMI270_write_spi(
-        uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
-{
-    uint32_t cnt;
-    int8_t rev = 0;
-    (void)(intf_ptr);
-    digitalWrite(CS_PIN, LOW);
-    SPI.transfer(reg_addr);
-    for (cnt = 0; cnt < length; cnt++)
-    {
-        SPI.transfer(*(reg_data + cnt));
-    }
-    digitalWrite(CS_PIN, HIGH);
-    return rev;
-}
-
 void bmi2xy_hal_delay_usec(uint32_t period_us, void *intf_ptr)
 {
     delayMicroseconds(period_us);
@@ -118,8 +85,8 @@ void setup() {
 
     //bmi2.intf_ptr = &spi_bus;
     bmi2.intf = BMI2_SPI_INTF;
-    bmi2.read = BMI270_read_spi;
-    bmi2.write = BMI270_write_spi;
+    bmi2.read = BMI270::read_spi;
+    bmi2.write = BMI270::write_spi;
     bmi2.read_write_len = 32;
     bmi2.delay_us = bmi2xy_hal_delay_usec;
 

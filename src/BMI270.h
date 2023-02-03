@@ -2,6 +2,49 @@
 
 #include "api/bmi270.h"
 
+class BMI270 {
+
+    private:
+    
+        static const uint8_t CS_PIN  = 5;
+
+    public:
+
+        static int8_t read_spi(
+                uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
+        {
+            uint32_t cnt;
+            int8_t rev = 0;
+            (void)(intf_ptr);
+            reg_addr = 0x80 | reg_addr;
+            digitalWrite(CS_PIN, LOW);
+            SPI.transfer(reg_addr);
+            for (cnt = 0; cnt < length; cnt++)
+            {
+                *(reg_data + cnt) = SPI.transfer(0x00);
+            }
+            digitalWrite(CS_PIN, HIGH);
+            return rev;
+        }
+
+        static int8_t write_spi(
+                uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+        {
+            uint32_t cnt;
+            int8_t rev = 0;
+            (void)(intf_ptr);
+            digitalWrite(CS_PIN, LOW);
+            SPI.transfer(reg_addr);
+            for (cnt = 0; cnt < length; cnt++)
+            {
+                SPI.transfer(*(reg_data + cnt));
+            }
+            digitalWrite(CS_PIN, HIGH);
+            return rev;
+        }
+
+}; // class BMI270
+
 #if 0
 
 #define CONFIG_INT_WDT_CHECK_CPU0 0
