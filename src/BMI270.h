@@ -36,6 +36,8 @@ class BMI270 {
             _bmi2.read = i2c_read;
             _bmi2.write = i2c_write;
 
+            _bmi2.intf = BMI2_I2C_INTF;
+
             _dev_info.wire = &wire;
         }
 
@@ -44,6 +46,8 @@ class BMI270 {
         {
             _bmi2.read = spi_read;
             _bmi2.write = spi_write;
+
+            _bmi2.intf = BMI2_SPI_INTF;
 
             _dev_info.spi = &spi;
             _dev_info.csPin = csPin;
@@ -151,7 +155,6 @@ class BMI270 {
         {
             _bmi2.chip_id = BMI2_I2C_PRIM_ADDR;
             _bmi2.delay_us = bmi2_delay_us;
-            _bmi2.intf = BMI2_I2C_INTF;
             _bmi2.intf_ptr = &_dev_info;
             _bmi2.read_write_len = 30; // Limitation of the Wire library
             _bmi2.config_file_ptr = NULL; // Use the default BMI270 config file
@@ -274,11 +277,15 @@ class BMI270 {
             digitalWrite(csPin, LOW);
 
             data[0] = addr | 0x80;
-            dev_info->spi->transfer(data, len+1);
+            dev_info->spi->transfer(data, len);
 
             digitalWrite(csPin, HIGH);
 
             dev_info->spi->endTransaction();
+
+            while (true) {
+                Serial.println(data[1]);
+            }
  
             return 0;
         }

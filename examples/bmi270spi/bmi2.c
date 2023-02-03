@@ -1863,6 +1863,9 @@ static void unpack_virtual_aux_data(struct bmi2_aux_fifo_data *aux,
 /*!  @name      User Interface Definitions                            */
 /******************************************************************************/
 
+uint8_t g_chipId;
+uint8_t g_devChipId;
+
 /*!
  * @brief This API is the entry point for bmi2 sensor. It selects between
  * I2C/SPI interface, based on user selection. It reads and validates the
@@ -1906,6 +1909,9 @@ int8_t bmi2_sec_init(struct bmi2_dev *dev)
                 /* Validate chip-id */
                 if (chip_id == dev->chip_id)
                 {
+                    g_chipId = chip_id;
+                    g_devChipId = dev->chip_id;
+
                     /* Assign resolution to the structure */
                     dev->resolution = 16;
 
