@@ -182,34 +182,33 @@ void loop()
         gotInterrupt = false;
 
         struct bmi2_sens_data sensor_data;
+
         bmi2_get_sensor_data(&sensor_data, &bmi2);
-        auto x = sensor_data.acc.x;
-        // auto y = sensor_data.acc.y;
-        //auto z = sensor_data.acc.z;
 
-        Serial.println(x);
+        auto ax = sensor_data.acc.x;
+        auto ay = sensor_data.acc.y;
+        auto az = sensor_data.acc.z;
 
-        /*
-        Serial.print("Accel x = ");
-        Serial.print(sensor_data[0].acc.x);
-        Serial.print("\t");
-        Serial.print("Accel y = ");
-        Serial.print(sensor_data[0].acc.y);
-        Serial.print("\t");
-        Serial.print("Accel z = ");
-        Serial.print(sensor_data[0].acc.z);
-        Serial.print("\t");
+        auto gx = sensor_data.gyr.x;
+        auto gy = sensor_data.gyr.y;
+        auto gz = sensor_data.gyr.z;
 
-        Serial.print("Gyro x = ");
-        Serial.print(sensor_data[1].gyr.x);
-        Serial.print("\t");
-        Serial.print("Gyro y = ");
-        Serial.print(sensor_data[1].gyr.y);
-        Serial.print("\t");
-        Serial.print("Gyro z = ");
-        Serial.print(sensor_data[1].gyr.z);
-        Serial.println();*/
-    } 
+        Serial.print("ax=");
+        Serial.print(ax);
+        Serial.print("  ay=");
+        Serial.print(ay);
+        Serial.print("  az=");
+        Serial.print(az);
+
+        Serial.print("  gx=");
+        Serial.print(gx);
+        Serial.print("  gy=");
+        Serial.print(gy);
+        Serial.print("  gz=");
+        Serial.print(gz);
+
+        Serial.println();
+    }
 
     delay(10);
 }
