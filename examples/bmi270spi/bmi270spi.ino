@@ -84,11 +84,11 @@ static void checkResult(const int8_t rslt, const char * funname)
     }
 }
 
-static uint32_t interruptCount;
+static bool gotInterrupt;
 
 static void handleInterrupt(void)
 {
-    interruptCount++;
+    gotInterrupt = true;
 }
 
 static void BMI270_Init()
@@ -167,21 +167,29 @@ void setup() {
 
 void loop() 
 {
+    /*
     extern uint8_t g_chipId, g_devChipId;
     Serial.print(g_chipId, HEX);
     Serial.print(" ");
     Serial.print(g_devChipId, HEX);
     Serial.print(" ");
-    Serial.println(interruptCount);
+    Serial.println(interruptCount);*/
 
-    gu8Result = bmi2_get_int_status(&gu16IntStatus, &bmi2);
+    //gu8Result = bmi2_get_int_status(&gu16IntStatus, &bmi2);
 
-    //  if ((gu16IntStatus & gu16AccData) && (gu16IntStatus & gu16GyrData) && (gu16IntStatus & gu16AuxData))
-    //  {
-    if (gu8DataFlag == 1)
-    {
-        gu8DataFlag = 0;
+    if (gotInterrupt) {
 
+        gotInterrupt = false;
+
+        struct bmi2_sens_data sensor_data;
+        bmi2_get_sensor_data(&sensor_data, &bmi2);
+        auto x = sensor_data.acc.x;
+        // auto y = sensor_data.acc.y;
+        //auto z = sensor_data.acc.z;
+
+        Serial.println(x);
+
+        /*
         Serial.print("Accel x = ");
         Serial.print(sensor_data[0].acc.x);
         Serial.print("\t");
@@ -200,8 +208,7 @@ void loop()
         Serial.print("\t");
         Serial.print("Gyro z = ");
         Serial.print(sensor_data[1].gyr.z);
-        Serial.print("\t");
-
+        Serial.println();*/
     } 
 
     delay(10);
