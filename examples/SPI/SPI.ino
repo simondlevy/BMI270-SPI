@@ -8,13 +8,9 @@
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
 
-// static uint8_t spi_bus;
-
 static uint8_t sens_int = BMI2_DRDY_INT;
 
-/* List the sensors which are required to enable */
-//static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
-static uint8_t sens_list[3] = {BMI2_ACCEL, BMI2_GYRO, BMI2_AUX};
+static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
 /* Structure to define BMI2 sensor configurations */
 static struct bmi2_dev bmi2;
@@ -117,7 +113,6 @@ void setup() {
     digitalWrite(CS_PIN, HIGH);
 
     Serial.begin(115200);
-    //spi_bus = CS_PIN;
 
     SPI.begin();
 
