@@ -24,15 +24,7 @@ void bmi2xy_hal_delay_usec(uint32_t period_us, void *intf_ptr)
     delayMicroseconds(period_us);
 }
 
-static void checkResult(const int8_t rslt, const char * funname)
-{
-    while (rslt) {
-        Serial.print(funname);
-        Serial.print(" failed with code ");
-        Serial.println(rslt);
-        delay(500);
-    }
-}
+
 
 static bool gotInterrupt;
 
@@ -43,7 +35,7 @@ static void handleInterrupt(void)
 
 static void BMI270_Init()
 {
-    checkResult(bmi270_init(&bmi2), "bmi270_init");
+    BMI270::checkResult(bmi270_init(&bmi2), "bmi270_init");
 
     config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
 
@@ -63,7 +55,7 @@ static void BMI270_Init()
     config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
 
     /* Set the accel configurations */
-    checkResult(bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
+    BMI270::checkResult(bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
 
 }
 
@@ -96,7 +88,7 @@ void setup() {
 
     BMI270_Init();
     
-    checkResult(bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
+    BMI270::checkResult(bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
 
     // Interrupt PINs configuration
     struct bmi2_int_pin_config data_int_cfg;
@@ -107,9 +99,9 @@ void setup() {
     data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
     data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
 
-    checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
+    BMI270::checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
     
-    checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
+    BMI270::checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
 
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }

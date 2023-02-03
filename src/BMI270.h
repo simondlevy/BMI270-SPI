@@ -10,6 +10,16 @@ class BMI270 {
 
     public:
 
+        static void checkResult(const int8_t rslt, const char * funname)
+        {
+            while (rslt) {
+                Serial.print(funname);
+                Serial.print(" failed with code ");
+                Serial.println(rslt);
+                delay(500);
+            }
+        }
+
         static int8_t read_spi(
                 uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
         {
