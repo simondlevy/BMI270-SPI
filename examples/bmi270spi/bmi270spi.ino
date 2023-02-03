@@ -10,7 +10,8 @@
 /*! SPI interface communication, 1 - Enable; 0- Disable */
 #define BMI270_INTERFACE_SPI UINT8_C(1)
 
-static const uint8_t BMI270_CS = 5;
+static const uint8_t CS_PIN  = 5;
+static const uint8_t INT_PIN = 22;
 
 static uint8_t spi_bus;
 
@@ -42,13 +43,13 @@ static int8_t BMI270_read_spi(
     int8_t rev = 0;
     (void)(intf_ptr);
     reg_addr = 0x80 | reg_addr;
-    digitalWrite(BMI270_CS, LOW);
+    digitalWrite(CS_PIN, LOW);
     SPI.transfer(reg_addr);
     for (cnt = 0; cnt < length; cnt++)
     {
         *(reg_data + cnt) = SPI.transfer(0x00);
     }
-    digitalWrite(BMI270_CS, HIGH);
+    digitalWrite(CS_PIN, HIGH);
     return rev;
 }
 
@@ -58,13 +59,13 @@ static int8_t BMI270_write_spi(
     uint32_t cnt;
     int8_t rev = 0;
     (void)(intf_ptr);
-    digitalWrite(BMI270_CS, LOW);
+    digitalWrite(CS_PIN, LOW);
     SPI.transfer(reg_addr);
     for (cnt = 0; cnt < length; cnt++)
     {
         SPI.transfer(*(reg_data + cnt));
     }
-    digitalWrite(BMI270_CS, HIGH);
+    digitalWrite(CS_PIN, HIGH);
     return rev;
 }
 
@@ -81,6 +82,13 @@ static void checkResult(const int8_t rslt, const char * funname)
         Serial.println(rslt);
         delay(500);
     }
+}
+
+static uint32_t interruptCount;
+
+static void handleInterrupt(void)
+{
+    interruptCount++;
 }
 
 static void BMI270_Init()
@@ -116,13 +124,13 @@ void setup() {
     config[1].type = BMI2_GYRO;
 
     /* Variable to define result */
-    pinMode(BMI270_CS, OUTPUT);
+    pinMode(CS_PIN, OUTPUT);
 
     //pinMode(interruptPin, INPUT_PULLUP);
-    digitalWrite(BMI270_CS, HIGH);
+    digitalWrite(CS_PIN, HIGH);
 
     Serial.begin(115200);
-    spi_bus = BMI270_CS;
+    spi_bus = CS_PIN;
 
     SPI.begin();
 
@@ -153,6 +161,8 @@ void setup() {
     checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
     
     checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
+
+    attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
 
 void loop() 
@@ -160,7 +170,9 @@ void loop()
     extern uint8_t g_chipId, g_devChipId;
     Serial.print(g_chipId, HEX);
     Serial.print(" ");
-    Serial.println(g_devChipId, HEX);
+    Serial.print(g_devChipId, HEX);
+    Serial.print(" ");
+    Serial.println(interruptCount);
 
     gu8Result = bmi2_get_int_status(&gu16IntStatus, &bmi2);
 
