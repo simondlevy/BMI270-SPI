@@ -10,6 +10,8 @@ class BMI270 {
 
     public:
 
+        struct bmi2_sens_config config[3];
+
         void begin(void)
         {
             pinMode(CS_PIN, OUTPUT);
