@@ -9,12 +9,7 @@ static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
 
 static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
-
-/* Structure to define BMI2 sensor configurations */
 static struct bmi2_dev bmi2;
-
-// Sensor initialization configuration.
-/* Structure to define the type of the sensor and its configurations */
 static struct bmi2_sens_config config[3];
 
 static void delay_usec(uint32_t period_us, void *intf_ptr)
@@ -28,6 +23,8 @@ static void handleInterrupt(void)
 {
     gotInterrupt = true;
 }
+
+static BMI270 imu;
 
 static void BMI270_Init()
 {
@@ -61,15 +58,11 @@ void setup() {
     config[0].type = BMI2_ACCEL;
     config[1].type = BMI2_GYRO;
 
-    /* Variable to define result */
-    pinMode(CS_PIN, OUTPUT);
-
-    //pinMode(interruptPin, INPUT_PULLUP);
-    digitalWrite(CS_PIN, HIGH);
-
     Serial.begin(115200);
 
     SPI.begin();
+
+    imu.begin();
 
     bmi2.intf = BMI2_SPI_INTF;
     bmi2.read = BMI270::read_spi;

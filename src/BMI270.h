@@ -10,6 +10,12 @@ class BMI270 {
 
     public:
 
+        void begin(void)
+        {
+            pinMode(CS_PIN, OUTPUT);
+            digitalWrite(CS_PIN, HIGH);
+        }
+
         static void checkResult(const int8_t rslt, const char * funname)
         {
             while (rslt) {
