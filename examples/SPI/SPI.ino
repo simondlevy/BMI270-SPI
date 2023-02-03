@@ -1,76 +1,195 @@
-/*
-   BMI270 I^2C example
+// Adapted from https://forum.arduino.cc/t/need-help-for-getting-mag-data-of-bmi270-imu/1000323
 
-   This file is part of the BMI270 library.
+#include <Arduino.h>
+#include <SPI.h>
 
-   Copyright (c) 2019,2023 Arduino SA and Simon D. Levy. 
-   All rights reserved.
+#include <BMI270.h>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+//#define CONFIG_INT_WDT_CHECK_CPU0 0
+/*! SPI interface communication, 1 - Enable; 0- Disable */
+//#define BMI270_INTERFACE_SPI UINT8_C(1)
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+static const uint8_t CS_PIN  = 5;
+static const uint8_t INT_PIN = 22;
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+static uint8_t spi_bus;
 
-#include "BMI270.h"
+static uint8_t sens_int = BMI2_DRDY_INT;
 
-static const uint8_t INTERRUPT_PIN   = 0;
-static const uint8_t CHIP_SELECT_PIN = 5;
+/* List the sensors which are required to enable */
+//static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
+static uint8_t sens_list[3] = {BMI2_ACCEL, BMI2_GYRO, BMI2_AUX};
 
-BMI270 imu = BMI270(SPI, CHIP_SELECT_PIN);
+/* Structure to define BMI2 sensor configurations */
+static struct bmi2_dev bmi2;
+
+// Sensor initialization configuration.
+/* Structure to define the type of the sensor and its configurations */
+static struct bmi2_sens_config config[3];
+
+static int8_t BMI270_read_spi(
+        uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
+{
+    uint32_t cnt;
+    int8_t rev = 0;
+    (void)(intf_ptr);
+    reg_addr = 0x80 | reg_addr;
+    digitalWrite(CS_PIN, LOW);
+    SPI.transfer(reg_addr);
+    for (cnt = 0; cnt < length; cnt++)
+    {
+        *(reg_data + cnt) = SPI.transfer(0x00);
+    }
+    digitalWrite(CS_PIN, HIGH);
+    return rev;
+}
+
+static int8_t BMI270_write_spi(
+        uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+{
+    uint32_t cnt;
+    int8_t rev = 0;
+    (void)(intf_ptr);
+    digitalWrite(CS_PIN, LOW);
+    SPI.transfer(reg_addr);
+    for (cnt = 0; cnt < length; cnt++)
+    {
+        SPI.transfer(*(reg_data + cnt));
+    }
+    digitalWrite(CS_PIN, HIGH);
+    return rev;
+}
+
+void bmi2xy_hal_delay_usec(uint32_t period_us, void *intf_ptr)
+{
+    delayMicroseconds(period_us);
+}
+
+static void checkResult(const int8_t rslt, const char * funname)
+{
+    while (rslt) {
+        Serial.print(funname);
+        Serial.print(" failed with code ");
+        Serial.println(rslt);
+        delay(500);
+    }
+}
 
 static bool gotInterrupt;
 
-void setup() 
+static void handleInterrupt(void)
 {
+    gotInterrupt = true;
+}
+
+static void BMI270_Init()
+{
+    checkResult(bmi270_init(&bmi2), "bmi270_init");
+
+    config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
+
+    /* Gravity range of the sensor (+/- 2G, 4G, 8G, 16G). */
+    config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
+    config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
+    config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
+
+    /* The user can change the following configuration parameter according to
+     * their required Output data Rate. By default ODR is set as 200Hz for
+     * gyro */
+    config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
+    /* Gyroscope Angular Rate Measurement Range.By default the range is 2000dps */
+    config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
+    config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
+    config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
+    config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
+
+    /* Set the accel configurations */
+    checkResult(bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
+
+}
+
+void setup() {
+
+    // Configure type of feature 
+    config[0].type = BMI2_ACCEL;
+    config[1].type = BMI2_GYRO;
+
+    /* Variable to define result */
+    pinMode(CS_PIN, OUTPUT);
+
+    //pinMode(interruptPin, INPUT_PULLUP);
+    digitalWrite(CS_PIN, HIGH);
+
     Serial.begin(115200);
+    spi_bus = CS_PIN;
 
     SPI.begin();
 
-    imu.begin();
-}
+    bmi2.intf_ptr = &spi_bus;
+    bmi2.intf = BMI2_SPI_INTF;
+    bmi2.read = BMI270_read_spi;
+    bmi2.write = BMI270_write_spi;
+    bmi2.read_write_len = 32;
+    bmi2.delay_us = bmi2xy_hal_delay_usec;
 
-static void report(void)
-{
-    int16_t ax=0, ay=0, az=0;
-    imu.readAccel(ax, ay, az);
+    /* Config file pointer should be assigned to NULL, so that default file
+     * address is assigned in bmi270_init */
+    bmi2.config_file_ptr = NULL;
 
-    int16_t gx=0, gy=0, gz=0;
-    imu.readGyro(gx, gy, gz);
+    BMI270_Init();
+    
+    checkResult(bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
 
-    Serial.print("ax=");
-    Serial.print(ax);
-    Serial.print("  ay=");
-    Serial.print(ay);
-    Serial.print("  az=");
-    Serial.print(az);
+    // Interrupt PINs configuration
+    struct bmi2_int_pin_config data_int_cfg;
+    data_int_cfg.pin_type = BMI2_INT1;
+    data_int_cfg.int_latch = BMI2_INT_NON_LATCH;
+    data_int_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
+    data_int_cfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
+    data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
+    data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
 
-    Serial.print("  gx=");
-    Serial.print(gx);
-    Serial.print("  gy=");
-    Serial.print(gy);
-    Serial.print("  gz=");
-    Serial.print(gz);
+    checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2), "bmi2_set_int_pin_config");
+    
+    checkResult(bmi2_map_data_int(sens_int, BMI2_INT1, &bmi2), "bmi2_map_data_int");
 
-    Serial.println();
+    attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
 
 void loop() 
 {
-    if (INTERRUPT_PIN == 0 || gotInterrupt) {
+    if (gotInterrupt) {
 
         gotInterrupt = false;
 
-        report();
+        struct bmi2_sens_data sensor_data;
 
+        bmi2_get_sensor_data(&sensor_data, &bmi2);
+
+        auto ax = sensor_data.acc.x;
+        auto ay = sensor_data.acc.y;
+        auto az = sensor_data.acc.z;
+
+        auto gx = sensor_data.gyr.x;
+        auto gy = sensor_data.gyr.y;
+        auto gz = sensor_data.gyr.z;
+
+        Serial.print("ax=");
+        Serial.print(ax);
+        Serial.print("  ay=");
+        Serial.print(ay);
+        Serial.print("  az=");
+        Serial.print(az);
+
+        Serial.print("  gx=");
+        Serial.print(gx);
+        Serial.print("  gy=");
+        Serial.print(gy);
+        Serial.print("  gz=");
+        Serial.print(gz);
+
+        Serial.println();
     }
+
+    delay(10);
 }
