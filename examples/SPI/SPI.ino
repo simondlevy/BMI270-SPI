@@ -5,14 +5,10 @@
 
 #include <BMI270.h>
 
-//#define CONFIG_INT_WDT_CHECK_CPU0 0
-/*! SPI interface communication, 1 - Enable; 0- Disable */
-//#define BMI270_INTERFACE_SPI UINT8_C(1)
-
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
 
-static uint8_t spi_bus;
+// static uint8_t spi_bus;
 
 static uint8_t sens_int = BMI2_DRDY_INT;
 
@@ -121,11 +117,11 @@ void setup() {
     digitalWrite(CS_PIN, HIGH);
 
     Serial.begin(115200);
-    spi_bus = CS_PIN;
+    //spi_bus = CS_PIN;
 
     SPI.begin();
 
-    bmi2.intf_ptr = &spi_bus;
+    //bmi2.intf_ptr = &spi_bus;
     bmi2.intf = BMI2_SPI_INTF;
     bmi2.read = BMI270_read_spi;
     bmi2.write = BMI270_write_spi;
