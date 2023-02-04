@@ -22,21 +22,6 @@ class BMI270 {
 
         static const uint8_t CS_PIN  = 5;
 
-        struct bmi2_dev bmi2;
-
-        struct bmi2_int_pin_config data_int_cfg;
-
-        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
-
-        struct bmi2_sens_config config[3];
-
-        struct bmi2_sens_data sensor_data;
-
-        static void delay_usec(uint32_t period_us, void *intf_ptr)
-        {
-            delayMicroseconds(period_us);
-        }
-
     public:
 
         BMI270(void)
@@ -134,7 +119,22 @@ class BMI270 {
             return sensor_data.gyr.z;
         }
 
-     private:
+    private:
+
+        struct bmi2_dev bmi2;
+
+        struct bmi2_int_pin_config data_int_cfg;
+
+        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
+
+        struct bmi2_sens_config config[3];
+
+        struct bmi2_sens_data sensor_data;
+
+        static void delay_usec(uint32_t period_us, void *intf_ptr)
+        {
+            delayMicroseconds(period_us);
+        }
 
         static void checkResult(const int8_t rslt, const char * funname)
         {
