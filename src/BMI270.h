@@ -28,25 +28,26 @@ class BMI270 {
         {
             (void)csPin;
 
-            config[0].type = BMI2_ACCEL;
-            config[1].type = BMI2_GYRO;
+            m_config[0].type = BMI2_ACCEL;
+            m_config[1].type = BMI2_GYRO;
 
-            config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
+            m_config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
 
             /* Gravity range of the sensor (+/- 2G, 4G, 8G, 16G). */
-            config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
-            config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
-            config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
+            m_config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
+            m_config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
+            m_config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
 
             /* The user can change the following configuration parameter according to
              * their required Output data Rate. By default ODR is set as 200Hz for
              * gyro */
-            config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
+            m_config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
+
             /* Gyroscope Angular Rate Measurement Range.By default the range is 2000dps */
-            config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
-            config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
-            config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
-            config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
+            m_config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
+            m_config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
+            m_config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
+            m_config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
 
             m_bmi2.intf = BMI2_SPI_INTF;
             m_bmi2.read = BMI270::read_spi;
@@ -74,7 +75,7 @@ class BMI270 {
             checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
             checkResult(
-                    bmi2_set_sensor_config(config, 2, &m_bmi2), "bmi2_set_sensor_config");
+                    bmi2_set_sensor_config(m_config, 2, &m_bmi2), "bmi2_set_sensor_config");
         
             uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
@@ -129,7 +130,7 @@ class BMI270 {
 
         struct bmi2_int_pin_config m_dataIntCfg;
 
-        struct bmi2_sens_config config[3];
+        struct bmi2_sens_config m_config[2];
 
         struct bmi2_sens_data sensor_data;
 
