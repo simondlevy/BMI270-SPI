@@ -22,26 +22,52 @@ class BMI270 {
 
         typedef enum {
 
-            GYR_ODR_25HZ = 6,
-            GYR_ODR_50HZ,
-            GYR_ODR_100HZ,
-            GYR_ODR_200HZ,
-            GYR_ODR_400HZ,
-            GYR_ODR_800HZ,
-            GYR_ODR_1600HZ,
-            GYR_ODR_3200HZ
+            GYRO_ODR_25_HZ = 6,
+            GYRO_ODR_50_HZ,
+            GYRO_ODR_100_HZ,
+            GYRO_ODR_200_HZ,
+            GYRO_ODR_400_HZ,
+            GYRO_ODR_800_HZ,
+            GYRO_ODR_1600_HZ,
+            GYRO_ODR_3200_HZ
 
         } gyroOdr_e;
 
         typedef enum {
 
-            GYR_RANGE_2000,
-            GYR_RANGE_1000,
-            GYR_RANGE_500,
-            GYR_RANGE_250,
-            GYR_RANGE_125
+            GYRO_RANGE_2000_DPS,
+            GYRO_RANGE_1000_DPS,
+            GYRO_RANGE_500_DPS,
+            GYRO_RANGE_250_DPS,
+            GYRO_RANGE_125_DPS
 
         } gyroRange_e;
+        
+        typedef enum {
+
+            ACCEL_ODR_0_78_HZ = 1,
+            ACCEL_ODR_1_56_HZ,
+            ACCEL_ODR_3_12_HZ,
+            ACCEL_ODR_6_25_HZ,
+            ACCEL_ODR_12_5_HZ,
+            ACCEL_ODR_25_HZ,
+            ACCEL_ODR_50_HZ,
+            ACCEL_ODR_100_HZ,
+            ACCEL_ODR_200_HZ,
+            ACCEL_ODR_400_HZ,
+            ACCEL_ODR_800_HZ,
+            ACCEL_ODR_1600_HZ
+
+        } accelOdr_e;
+
+        typedef enum {
+
+            ACCEL_RANGE_2_G,
+            ACCEL_RANGE_4_G,
+            ACCEL_RANGE_8_G,
+            ACCEL_RANGE_16_G
+
+        } accelRange_e;
 
         BMI270(const uint8_t csPin, SPIClass & spi = SPI)
             : BMI270()
@@ -132,25 +158,21 @@ class BMI270 {
 
         busData_t m_busData;
 
-        BMI270(void)
+        BMI270(
+                const accelRange_e accelRange = ACCEL_RANGE_2_G,
+                const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
+                const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
+                const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
         {
             m_config[0].type = BMI2_ACCEL;
-            m_config[1].type = BMI2_GYRO;
-
-            m_config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
-
-            // Gravity range of the sensor (+/- 2G, 4G, 8G, 16G)
-            m_config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
+            m_config[0].cfg.acc.odr = accelOdr;
+            m_config[0].cfg.acc.range = accelRange;
             m_config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
             m_config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
 
-            // The user can change the following configuration parameter
-            // according to their required Output data Rate. By default ODR is
-            // set as 200Hz for gyro 
-            m_config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
-
-            // Gyroscope Angular Rate Measurement Range.By default the range is 2000dps
-            m_config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
+            m_config[1].type = BMI2_GYRO;
+            m_config[1].cfg.gyr.odr = gyroOdr;
+            m_config[1].cfg.gyr.range = gyroRange;
             m_config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
             m_config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
             m_config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
