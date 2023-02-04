@@ -149,18 +149,19 @@ class BMI270 {
         }
 
         static int8_t read_spi(
-                uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
+                const uint8_t addr,
+                uint8_t * data,
+                const uint32_t length,
+                void * intf_ptr)
         {
             (void)intf_ptr;
 
-            reg_addr = 0x80 | reg_addr;
-
             digitalWrite(CS_PIN, LOW);
 
-            SPI.transfer(reg_addr);
+            SPI.transfer(0x80 | addr);
 
             for (auto cnt = 0; cnt < length; cnt++) {
-                *(reg_data + cnt) = SPI.transfer(0x00);
+                *(data + cnt) = SPI.transfer(0);
             }
 
             digitalWrite(CS_PIN, HIGH);
@@ -169,16 +170,16 @@ class BMI270 {
         }
 
         static int8_t write_spi(
-                uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+                uint8_t addr, const uint8_t *data, uint32_t length, void *intf_ptr)
         {
             uint32_t cnt;
             int8_t rev = 0;
             (void)(intf_ptr);
             digitalWrite(CS_PIN, LOW);
-            SPI.transfer(reg_addr);
+            SPI.transfer(addr);
             for (cnt = 0; cnt < length; cnt++)
             {
-                SPI.transfer(*(reg_data + cnt));
+                SPI.transfer(*(data + cnt));
             }
             digitalWrite(CS_PIN, HIGH);
             return rev;
