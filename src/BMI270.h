@@ -75,6 +75,8 @@ class BMI270 {
 
             checkResult(
                     bmi2_set_sensor_config(config, 2, &m_bmi2), "bmi2_set_sensor_config");
+        
+            uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
             checkResult(
                     bmi2_sensor_enable(sens_list, 2, &m_bmi2), "bmi2_sensor_enable");
@@ -126,8 +128,6 @@ class BMI270 {
         struct bmi2_dev m_bmi2;
 
         struct bmi2_int_pin_config m_dataIntCfg;
-
-        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
         struct bmi2_sens_config config[3];
 
