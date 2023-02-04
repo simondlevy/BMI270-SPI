@@ -18,15 +18,11 @@
 
 class BMI270 {
 
-    private:
-
-        static const uint8_t CS_PIN  = 5;
-
     public:
 
         BMI270(const uint8_t csPin)
         {
-            (void)csPin;
+            m_busData.csPin = csPin;
 
             m_config[0].type = BMI2_ACCEL;
             m_config[1].type = BMI2_GYRO;
@@ -50,8 +46,10 @@ class BMI270 {
             m_config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
 
             m_bmi2.intf = BMI2_SPI_INTF;
-            m_bmi2.read = BMI270::read_spi;
-            m_bmi2.write = BMI270::write_spi;
+
+            m_bmi2.intf_ptr = &m_busData;
+            m_bmi2.read = BMI270::spi_read;
+            m_bmi2.write = BMI270::spi_write;
             m_bmi2.read_write_len = 32;
             m_bmi2.delay_us = delay_usec;
 
@@ -69,8 +67,8 @@ class BMI270 {
 
         void begin(void)
         {
-            pinMode(CS_PIN, OUTPUT);
-            digitalWrite(CS_PIN, HIGH);
+            pinMode(m_busData.csPin, OUTPUT);
+            digitalWrite(m_busData.csPin, HIGH);
 
             checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
@@ -126,6 +124,12 @@ class BMI270 {
 
     private:
 
+        typedef struct {
+
+            uint8_t csPin;
+
+        } busData_t;
+
         struct bmi2_dev m_bmi2;
 
         struct bmi2_int_pin_config m_dataIntCfg;
@@ -134,8 +138,12 @@ class BMI270 {
 
         struct bmi2_sens_data m_sensorData;
 
-        static void delay_usec(uint32_t period_us, void *intf_ptr)
+        busData_t m_busData;
+
+        static void delay_usec(uint32_t period_us, void * intf_ptr)
         {
+            (void)intf_ptr;
+
             delayMicroseconds(period_us);
         }
 
@@ -149,15 +157,15 @@ class BMI270 {
             }
         }
 
-        static int8_t read_spi(
+        static int8_t spi_read(
                 const uint8_t addr,
                 uint8_t * data,
                 const uint32_t count,
                 void * intf_ptr)
         {
-            (void)intf_ptr;
+            busData_t * busData = (busData_t *)intf_ptr;
 
-            digitalWrite(CS_PIN, LOW);
+            digitalWrite(busData->csPin, LOW);
 
             SPI.transfer(0x80 | addr);
 
@@ -165,20 +173,20 @@ class BMI270 {
                 data[k] = SPI.transfer(0);
             }
 
-            digitalWrite(CS_PIN, HIGH);
+            digitalWrite(busData->csPin, HIGH);
 
             return 0;
         }
 
-        static int8_t write_spi(
+        static int8_t spi_write(
                 uint8_t addr,
                 const uint8_t *data,
                 uint32_t count,
                 void *intf_ptr)
         {
-            (void)(intf_ptr);
+            busData_t * busData = (busData_t *)intf_ptr;
 
-            digitalWrite(CS_PIN, LOW);
+            digitalWrite(busData->csPin, LOW);
 
             SPI.transfer(addr);
 
@@ -186,7 +194,7 @@ class BMI270 {
                 SPI.transfer(data[k]);
             }
 
-            digitalWrite(CS_PIN, HIGH);
+            digitalWrite(busData->csPin, HIGH);
 
             return 0;
         }
