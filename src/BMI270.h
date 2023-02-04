@@ -58,12 +58,12 @@ class BMI270 {
              * address is assigned in bmi270_init */
             m_bmi2.config_file_ptr = NULL;
 
-            data_int_cfg.pin_type = BMI2_INT1;
-            data_int_cfg.int_latch = BMI2_INT_NON_LATCH;
-            data_int_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
-            data_int_cfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
-            data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
-            data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
+            m_dataIntCfg.pin_type = BMI2_INT1;
+            m_dataIntCfg.int_latch = BMI2_INT_NON_LATCH;
+            m_dataIntCfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
+            m_dataIntCfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
+            m_dataIntCfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
+            m_dataIntCfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
         }
 
         void begin(void)
@@ -79,7 +79,7 @@ class BMI270 {
             checkResult(
                     bmi2_sensor_enable(sens_list, 2, &m_bmi2), "bmi2_sensor_enable");
 
-            checkResult(bmi2_set_int_pin_config(&data_int_cfg, &m_bmi2),
+            checkResult(bmi2_set_int_pin_config(&m_dataIntCfg, &m_bmi2),
                     "bmi2_set_int_pin_config");
 
             checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &m_bmi2),
@@ -125,7 +125,7 @@ class BMI270 {
 
         struct bmi2_dev m_bmi2;
 
-        struct bmi2_int_pin_config data_int_cfg;
+        struct bmi2_int_pin_config m_dataIntCfg;
 
         uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
