@@ -48,15 +48,15 @@ class BMI270 {
             config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
             config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
 
-            bmi2.intf = BMI2_SPI_INTF;
-            bmi2.read = BMI270::read_spi;
-            bmi2.write = BMI270::write_spi;
-            bmi2.read_write_len = 32;
-            bmi2.delay_us = delay_usec;
+            m_bmi2.intf = BMI2_SPI_INTF;
+            m_bmi2.read = BMI270::read_spi;
+            m_bmi2.write = BMI270::write_spi;
+            m_bmi2.read_write_len = 32;
+            m_bmi2.delay_us = delay_usec;
 
             /* Config file pointer should be assigned to NULL, so that default file
              * address is assigned in bmi270_init */
-            bmi2.config_file_ptr = NULL;
+            m_bmi2.config_file_ptr = NULL;
 
             data_int_cfg.pin_type = BMI2_INT1;
             data_int_cfg.int_latch = BMI2_INT_NON_LATCH;
@@ -71,24 +71,24 @@ class BMI270 {
             pinMode(CS_PIN, OUTPUT);
             digitalWrite(CS_PIN, HIGH);
 
-            checkResult(bmi270_init(&bmi2), "bmi270_init");
+            checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
             checkResult(
-                    bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
+                    bmi2_set_sensor_config(config, 2, &m_bmi2), "bmi2_set_sensor_config");
 
             checkResult(
-                    bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
+                    bmi2_sensor_enable(sens_list, 2, &m_bmi2), "bmi2_sensor_enable");
 
-            checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2),
+            checkResult(bmi2_set_int_pin_config(&data_int_cfg, &m_bmi2),
                     "bmi2_set_int_pin_config");
 
-            checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2),
+            checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &m_bmi2),
                     "bmi2_map_data_int");
         }
 
         void readSensor(void)
         {
-            bmi2_get_sensor_data(&sensor_data, &bmi2);
+            bmi2_get_sensor_data(&sensor_data, &m_bmi2);
         }
 
         int16_t getAccelX(void)
@@ -123,7 +123,7 @@ class BMI270 {
 
     private:
 
-        struct bmi2_dev bmi2;
+        struct bmi2_dev m_bmi2;
 
         struct bmi2_int_pin_config data_int_cfg;
 
