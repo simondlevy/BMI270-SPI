@@ -58,6 +58,12 @@ class BMI270 {
             digitalWrite(CS_PIN, HIGH);
 
             checkResult(bmi270_init(&bmi2), "bmi270_init");
+
+            checkResult(
+                    bmi2_set_sensor_config(config, 2, &bmi2), "bmi2_set_sensor_config");
+
+            checkResult(
+                    bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
         }
 
         static void checkResult(const int8_t rslt, const char * funname)

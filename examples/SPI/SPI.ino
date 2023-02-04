@@ -24,12 +24,6 @@ void setup() {
 
     imu.begin();
 
-    BMI270::checkResult(
-            bmi2_set_sensor_config(imu.config, 2, &imu.bmi2), "bmi2_set_sensor_config");
-
-    BMI270::checkResult(
-            bmi2_sensor_enable(imu.sens_list, 2, &imu.bmi2), "bmi2_sensor_enable");
-
     // Interrupt PINs configuration
     struct bmi2_int_pin_config data_int_cfg;
     data_int_cfg.pin_type = BMI2_INT1;
