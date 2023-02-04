@@ -91,37 +91,37 @@ class BMI270 {
 
         void readSensor(void)
         {
-            bmi2_get_sensor_data(&sensor_data, &m_bmi2);
+            bmi2_get_sensor_data(&m_sensorData, &m_bmi2);
         }
 
         int16_t getAccelX(void)
         {
-            return sensor_data.acc.x;
+            return m_sensorData.acc.x;
         }
 
         int16_t getAccelY(void)
         {
-            return sensor_data.acc.y;
+            return m_sensorData.acc.y;
         }
 
         int16_t getAccelZ(void)
         {
-            return sensor_data.acc.z;
+            return m_sensorData.acc.z;
         }
 
         int16_t getGyroX(void)
         {
-            return sensor_data.gyr.x;
+            return m_sensorData.gyr.x;
         }
 
         int16_t getGyroY(void)
         {
-            return sensor_data.gyr.y;
+            return m_sensorData.gyr.y;
         }
 
         int16_t getGyroZ(void)
         {
-            return sensor_data.gyr.z;
+            return m_sensorData.gyr.z;
         }
 
     private:
@@ -132,7 +132,7 @@ class BMI270 {
 
         struct bmi2_sens_config m_config[2];
 
-        struct bmi2_sens_data sensor_data;
+        struct bmi2_sens_data m_sensorData;
 
         static void delay_usec(uint32_t period_us, void *intf_ptr)
         {
