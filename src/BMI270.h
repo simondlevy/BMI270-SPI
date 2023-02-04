@@ -151,7 +151,7 @@ class BMI270 {
         static int8_t read_spi(
                 const uint8_t addr,
                 uint8_t * data,
-                const uint32_t length,
+                const uint32_t count,
                 void * intf_ptr)
         {
             (void)intf_ptr;
@@ -160,8 +160,8 @@ class BMI270 {
 
             SPI.transfer(0x80 | addr);
 
-            for (auto cnt = 0; cnt < length; cnt++) {
-                *(data + cnt) = SPI.transfer(0);
+            for (auto k = 0; k < count; k++) {
+                data[k] = SPI.transfer(0);
             }
 
             digitalWrite(CS_PIN, HIGH);
