@@ -8,6 +8,8 @@ class BMI270 {
     
         static const uint8_t CS_PIN  = 5;
 
+        struct bmi2_int_pin_config data_int_cfg;
+
         static void delay_usec(uint32_t period_us, void *intf_ptr)
         {
             delayMicroseconds(period_us);
@@ -50,6 +52,13 @@ class BMI270 {
             /* Config file pointer should be assigned to NULL, so that default file
              * address is assigned in bmi270_init */
             bmi2.config_file_ptr = NULL;
+
+            data_int_cfg.pin_type = BMI2_INT1;
+            data_int_cfg.int_latch = BMI2_INT_NON_LATCH;
+            data_int_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
+            data_int_cfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
+            data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
+            data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
         }
 
         void begin(void)
@@ -64,6 +73,12 @@ class BMI270 {
 
             checkResult(
                     bmi2_sensor_enable(sens_list, 2, &bmi2), "bmi2_sensor_enable");
+
+            checkResult(bmi2_set_int_pin_config(&data_int_cfg, &bmi2),
+                    "bmi2_set_int_pin_config");
+
+            checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2),
+                    "bmi2_map_data_int");
         }
 
         static void checkResult(const int8_t rslt, const char * funname)

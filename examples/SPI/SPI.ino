@@ -24,19 +24,6 @@ void setup() {
 
     imu.begin();
 
-    // Interrupt PINs configuration
-    struct bmi2_int_pin_config data_int_cfg;
-    data_int_cfg.pin_type = BMI2_INT1;
-    data_int_cfg.int_latch = BMI2_INT_NON_LATCH;
-    data_int_cfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
-    data_int_cfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
-    data_int_cfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
-    data_int_cfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
-
-    BMI270::checkResult(bmi2_set_int_pin_config(&data_int_cfg, &imu.bmi2), "bmi2_set_int_pin_config");
-    
-    BMI270::checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &imu.bmi2), "bmi2_map_data_int");
-
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
 
