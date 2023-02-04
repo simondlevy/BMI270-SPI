@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include <Arduino.h>
 #include <SPI.h>
 
 #include "api/bmi270.h"
@@ -83,6 +82,15 @@ class BMI270 {
 
         void begin(void)
         {
+            struct bmi2_int_pin_config interruptConfig;
+
+            interruptConfig.pin_type = BMI2_INT1;
+            interruptConfig.int_latch = BMI2_INT_NON_LATCH;
+            interruptConfig.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
+            interruptConfig.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
+            interruptConfig.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
+            interruptConfig.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
+
             pinMode(m_busData.csPin, OUTPUT);
             digitalWrite(m_busData.csPin, HIGH);
 
@@ -97,7 +105,7 @@ class BMI270 {
             checkResult(
                     bmi2_sensor_enable(sens_list, 2, &m_bmi2), "bmi2_sensor_enable");
 
-            checkResult(bmi2_set_int_pin_config(&m_dataIntCfg, &m_bmi2),
+            checkResult(bmi2_set_int_pin_config(&interruptConfig, &m_bmi2),
                     "bmi2_set_int_pin_config");
 
             checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &m_bmi2),
@@ -150,8 +158,6 @@ class BMI270 {
 
         struct bmi2_dev m_bmi2;
 
-        struct bmi2_int_pin_config m_dataIntCfg;
-
         struct bmi2_sens_config m_config[2];
 
         struct bmi2_sens_data m_sensorData;
@@ -185,13 +191,7 @@ class BMI270 {
             // file address is assigned in bmi270_init
             m_bmi2.config_file_ptr = NULL;
 
-            m_dataIntCfg.pin_type = BMI2_INT1;
-            m_dataIntCfg.int_latch = BMI2_INT_NON_LATCH;
-            m_dataIntCfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
-            m_dataIntCfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
-            m_dataIntCfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
-            m_dataIntCfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
-        }
+       }
 
         static void delay_usec(uint32_t period_us, void * intf_ptr)
         {

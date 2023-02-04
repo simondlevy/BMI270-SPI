@@ -6,7 +6,6 @@
  *
  */
 
-#include <Arduino.h>
 #include <SPI.h>
 
 #include "BMI270.h"
