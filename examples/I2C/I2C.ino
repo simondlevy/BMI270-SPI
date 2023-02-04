@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <BMI270.h>
+#include <BMI270_I2C.h>
 
 static const uint8_t INT_PIN = 14;
 
