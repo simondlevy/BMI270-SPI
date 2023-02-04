@@ -9,11 +9,6 @@ static uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
 static const uint8_t INT_PIN = 22;
 
-static void delay_usec(uint32_t period_us, void *intf_ptr)
-{
-    delayMicroseconds(period_us);
-}
-
 static bool gotInterrupt;
 
 static void handleInterrupt(void)
@@ -30,16 +25,6 @@ void setup() {
     SPI.begin();
 
     imu.begin();
-
-    imu.bmi2.intf = BMI2_SPI_INTF;
-    imu.bmi2.read = BMI270::read_spi;
-    imu.bmi2.write = BMI270::write_spi;
-    imu.bmi2.read_write_len = 32;
-    imu.bmi2.delay_us = delay_usec;
-
-    /* Config file pointer should be assigned to NULL, so that default file
-     * address is assigned in bmi270_init */
-    imu.bmi2.config_file_ptr = NULL;
 
     BMI270::checkResult(bmi270_init(&imu.bmi2), "bmi270_init");
 
