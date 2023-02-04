@@ -21,7 +21,7 @@ static void handleInterrupt(void)
     gotInterrupt = true;
 }
 
-static BMI270 imu = BMI270(CS_PIN);
+static BMI270 imu = BMI270(SPI, CS_PIN);
 
 void setup() {
 

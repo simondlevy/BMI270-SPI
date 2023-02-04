@@ -20,8 +20,10 @@ class BMI270 {
 
     public:
 
-        BMI270(const uint8_t csPin)
+        BMI270(SPIClass & spi, const uint8_t csPin)
         {
+            (void)spi;
+
             m_busData.csPin = csPin;
 
             m_config[0].type = BMI2_ACCEL;
