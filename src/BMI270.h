@@ -5,8 +5,10 @@
 class BMI270 {
 
     private:
-    
+
         static const uint8_t CS_PIN  = 5;
+
+        struct bmi2_dev bmi2;
 
         struct bmi2_int_pin_config data_int_cfg;
 
@@ -14,14 +16,14 @@ class BMI270 {
 
         struct bmi2_sens_config config[3];
 
+        struct bmi2_sens_data sensor_data;
+
         static void delay_usec(uint32_t period_us, void *intf_ptr)
         {
             delayMicroseconds(period_us);
         }
 
     public:
-
-        struct bmi2_dev bmi2;
 
         BMI270(void)
         {
@@ -82,6 +84,43 @@ class BMI270 {
             checkResult(bmi2_map_data_int(BMI2_DRDY_INT, BMI2_INT1, &bmi2),
                     "bmi2_map_data_int");
         }
+
+        void readSensor(void)
+        {
+            bmi2_get_sensor_data(&sensor_data, &bmi2);
+        }
+
+        int16_t getAccelX(void)
+        {
+            return sensor_data.acc.x;
+        }
+
+        int16_t getAccelY(void)
+        {
+            return sensor_data.acc.y;
+        }
+
+        int16_t getAccelZ(void)
+        {
+            return sensor_data.acc.z;
+        }
+
+        int16_t getGyroX(void)
+        {
+            return sensor_data.gyr.x;
+        }
+
+        int16_t getGyroY(void)
+        {
+            return sensor_data.gyr.y;
+        }
+
+        int16_t getGyroZ(void)
+        {
+            return sensor_data.gyr.z;
+        }
+
+     private:
 
         static void checkResult(const int8_t rslt, const char * funname)
         {

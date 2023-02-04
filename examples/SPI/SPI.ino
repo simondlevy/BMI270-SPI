@@ -33,31 +33,21 @@ void loop()
 
         gotInterrupt = false;
 
-        struct bmi2_sens_data sensor_data;
-
-        bmi2_get_sensor_data(&sensor_data, &imu.bmi2);
-
-        auto ax = sensor_data.acc.x;
-        auto ay = sensor_data.acc.y;
-        auto az = sensor_data.acc.z;
-
-        auto gx = sensor_data.gyr.x;
-        auto gy = sensor_data.gyr.y;
-        auto gz = sensor_data.gyr.z;
+        imu.readSensor();
 
         Serial.print("ax=");
-        Serial.print(ax);
+        Serial.print(imu.getAccelX());
         Serial.print("  ay=");
-        Serial.print(ay);
+        Serial.print(imu.getAccelY());
         Serial.print("  az=");
-        Serial.print(az);
+        Serial.print(imu.getAccelZ());
 
         Serial.print("  gx=");
-        Serial.print(gx);
+        Serial.print(imu.getGyroX());
         Serial.print("  gy=");
-        Serial.print(gy);
+        Serial.print(imu.getGyroY());
         Serial.print("  gz=");
-        Serial.print(gz);
+        Serial.print(imu.getGyroZ());
 
         Serial.println();
     }
