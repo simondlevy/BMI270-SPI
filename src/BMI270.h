@@ -21,49 +21,15 @@ class BMI270 {
     public:
 
         BMI270(SPIClass & spi, const uint8_t csPin)
+            : BMI270()
         {
             m_busData.spi = &spi;
             m_busData.csPin = csPin;
 
-            m_config[0].type = BMI2_ACCEL;
-            m_config[1].type = BMI2_GYRO;
-
-            m_config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
-
-            /* Gravity range of the sensor (+/- 2G, 4G, 8G, 16G). */
-            m_config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
-            m_config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
-            m_config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
-
-            /* The user can change the following configuration parameter according to
-             * their required Output data Rate. By default ODR is set as 200Hz for
-             * gyro */
-            m_config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
-
-            /* Gyroscope Angular Rate Measurement Range.By default the range is 2000dps */
-            m_config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
-            m_config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
-            m_config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
-            m_config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
-
             m_bmi2.intf = BMI2_SPI_INTF;
 
-            m_bmi2.intf_ptr = &m_busData;
             m_bmi2.read = BMI270::spi_read;
             m_bmi2.write = BMI270::spi_write;
-            m_bmi2.read_write_len = 32;
-            m_bmi2.delay_us = delay_usec;
-
-            /* Config file pointer should be assigned to NULL, so that default file
-             * address is assigned in bmi270_init */
-            m_bmi2.config_file_ptr = NULL;
-
-            m_dataIntCfg.pin_type = BMI2_INT1;
-            m_dataIntCfg.int_latch = BMI2_INT_NON_LATCH;
-            m_dataIntCfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
-            m_dataIntCfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
-            m_dataIntCfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
-            m_dataIntCfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
         }
 
         void begin(void)
@@ -142,6 +108,46 @@ class BMI270 {
 
         busData_t m_busData;
 
+        BMI270(void)
+        {
+            m_config[0].type = BMI2_ACCEL;
+            m_config[1].type = BMI2_GYRO;
+
+            m_config[0].cfg.acc.odr = BMI2_ACC_ODR_100HZ;
+
+            // Gravity range of the sensor (+/- 2G, 4G, 8G, 16G)
+            m_config[0].cfg.acc.range = BMI2_ACC_RANGE_2G;
+            m_config[0].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
+            m_config[0].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE;
+
+            // The user can change the following configuration parameter
+            // according to their required Output data Rate. By default ODR is
+            // set as 200Hz for gyro 
+            m_config[1].cfg.gyr.odr = BMI2_GYR_ODR_100HZ;
+
+            // Gyroscope Angular Rate Measurement Range.By default the range is 2000dps
+            m_config[1].cfg.gyr.range = BMI2_GYR_RANGE_2000;
+            m_config[1].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
+            m_config[1].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
+            m_config[1].cfg.gyr.filter_perf = BMI2_PERF_OPT_MODE;
+
+            m_bmi2.intf_ptr = &m_busData;
+            m_bmi2.read_write_len = 32;
+            m_bmi2.delay_us = delay_usec;
+
+            // Config file pointer should be assigned to NULL, so that default
+            // file address is assigned in bmi270_init
+            m_bmi2.config_file_ptr = NULL;
+
+            m_dataIntCfg.pin_type = BMI2_INT1;
+            m_dataIntCfg.int_latch = BMI2_INT_NON_LATCH;
+            m_dataIntCfg.pin_cfg[0].output_en = BMI2_INT_OUTPUT_ENABLE; 
+            m_dataIntCfg.pin_cfg[0].od = BMI2_INT_PUSH_PULL;
+            m_dataIntCfg.pin_cfg[0].lvl = BMI2_INT_ACTIVE_LOW;     
+            m_dataIntCfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
+        }
+
+ 
         static void delay_usec(uint32_t period_us, void * intf_ptr)
         {
             (void)intf_ptr;
