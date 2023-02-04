@@ -24,8 +24,10 @@ class BMI270 {
 
     public:
 
-        BMI270(void)
+        BMI270(const uint8_t csPin)
         {
+            (void)csPin;
+
             config[0].type = BMI2_ACCEL;
             config[1].type = BMI2_GYRO;
 
