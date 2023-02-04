@@ -5,21 +5,22 @@
 #######################################
 
 BMI270	KEYWORD1
-IMU	KEYWORD1
 
 #######################################
 # Methods and Functions 
 #######################################	
 
 begin	KEYWORD2
-end	KEYWORD2
 
-readAcceleration	KEYWORD2
-readGyroscope	KEYWORD2
-gyroscopeAvailable	KEYWORD2
-accelerationAvailable	KEYWORD2
-accelerationSampleRate	KEYWORD2
-gyroscopeSampleRate	KEYWORD2
+readSensor	KEYWORD2
+
+getAccelX	KEYWORD2
+getAccelY	KEYWORD2
+getAccelZ	KEYWORD2
+
+getGyroX	KEYWORD2
+getGyroY	KEYWORD2
+getGyroZ	KEYWORD2
 
 #######################################
 # Constants
