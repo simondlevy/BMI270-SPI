@@ -1,4 +1,10 @@
-// Adapted from https://forum.arduino.cc/t/need-help-for-getting-mag-data-of-bmi270-imu/1000323
+/* Read BMI270 sensor via SPI bus
+ *
+ * Copyright (c) 2023 Simon D. Levy
+ *
+ * MIT License
+ *
+ */
 
 #include <Arduino.h>
 #include <SPI.h>

@@ -1,4 +1,18 @@
-// Adapted from https://forum.arduino.cc/t/need-help-for-getting-mag-data-of-bmi270-imu/1000323
+/* BMI sensor class supporting I^2C and SPI buses
+ *
+ * Copyright (c) 2023 Simon D. Levy
+ *
+ * Adapted from 
+ *   https://forum.arduino.cc/t/need-help-for-getting-mag-data-of-bmi270-imu/1000323
+ *
+ * MIT License
+ *
+ */
+
+#pragma once
+
+#include <Arduino.h>
+#include <SPI.h>
 
 #include "api/bmi270.h"
 
