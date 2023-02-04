@@ -20,6 +20,29 @@ class BMI270 {
 
     public:
 
+        typedef enum {
+
+            GYR_ODR_25HZ = 6,
+            GYR_ODR_50HZ,
+            GYR_ODR_100HZ,
+            GYR_ODR_200HZ,
+            GYR_ODR_400HZ,
+            GYR_ODR_800HZ,
+            GYR_ODR_1600HZ,
+            GYR_ODR_3200HZ
+
+        } gyroOdr_e;
+
+        typedef enum {
+
+            GYR_RANGE_2000,
+            GYR_RANGE_1000,
+            GYR_RANGE_500,
+            GYR_RANGE_250,
+            GYR_RANGE_125
+
+        } gyroRange_e;
+
         BMI270(const uint8_t csPin, SPIClass & spi = SPI)
             : BMI270()
         {
@@ -40,7 +63,8 @@ class BMI270 {
             checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
             checkResult(
-                    bmi2_set_sensor_config(m_config, 2, &m_bmi2), "bmi2_set_sensor_config");
+                    bmi2_set_sensor_config(m_config, 2, &m_bmi2),
+                    "bmi2_set_sensor_config");
 
             uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
@@ -147,7 +171,6 @@ class BMI270 {
             m_dataIntCfg.pin_cfg[0].input_en = BMI2_INT_INPUT_DISABLE; 
         }
 
- 
         static void delay_usec(uint32_t period_us, void * intf_ptr)
         {
             (void)intf_ptr;
