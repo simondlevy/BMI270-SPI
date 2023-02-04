@@ -10,6 +10,10 @@ class BMI270 {
 
         struct bmi2_int_pin_config data_int_cfg;
 
+        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
+
+        struct bmi2_sens_config config[3];
+
         static void delay_usec(uint32_t period_us, void *intf_ptr)
         {
             delayMicroseconds(period_us);
@@ -17,8 +21,6 @@ class BMI270 {
 
     public:
 
-        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
-        struct bmi2_sens_config config[3];
         struct bmi2_dev bmi2;
 
         BMI270(void)
