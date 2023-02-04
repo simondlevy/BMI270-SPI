@@ -13,6 +13,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+#include <Wire.h>
 
 #include "api/bmi270.h"
 
@@ -28,8 +29,20 @@ class BMI270 {
 
             m_bmi2.intf = BMI2_SPI_INTF;
 
-            m_bmi2.read = BMI270::spi_read;
-            m_bmi2.write = BMI270::spi_write;
+            m_bmi2.read = spi_read;
+            m_bmi2.write = spi_write;
+        }
+
+        BMI270(TwoWire & wire)
+            : BMI270()
+        {
+            m_busData.wire = &wire;
+            m_busData.csPin = 0;
+
+            m_bmi2.intf = BMI2_I2C_INTF;
+
+            m_bmi2.read = i2c_read;
+            m_bmi2.write = i2c_write;
         }
 
         void begin(void)
@@ -102,6 +115,7 @@ class BMI270 {
 
             SPIClass * spi;
             uint8_t csPin;
+            TwoWire * wire;
 
         } busData_t;
 
@@ -210,6 +224,32 @@ class BMI270 {
             }
 
             digitalWrite(busData->csPin, HIGH);
+
+            return 0;
+        }
+
+        static int8_t i2c_read(
+                const uint8_t addr,
+                uint8_t * data,
+                const uint32_t count,
+                void * intf_ptr)
+        {
+            busData_t * busData = (busData_t *)intf_ptr;
+
+            (void)busData;
+
+            return 0;
+        }
+
+        static int8_t i2c_write(
+                uint8_t addr,
+                const uint8_t *data,
+                uint32_t count,
+                void *intf_ptr)
+        {
+            busData_t * busData = (busData_t *)intf_ptr;
+
+            (void)busData;
 
             return 0;
         }
