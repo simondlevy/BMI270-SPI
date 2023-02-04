@@ -22,8 +22,7 @@ class BMI270 {
 
         BMI270(SPIClass & spi, const uint8_t csPin)
         {
-            (void)spi;
-
+            m_busData.spi = &spi;
             m_busData.csPin = csPin;
 
             m_config[0].type = BMI2_ACCEL;
@@ -128,6 +127,7 @@ class BMI270 {
 
         typedef struct {
 
+            SPIClass * spi;
             uint8_t csPin;
 
         } busData_t;
@@ -169,10 +169,10 @@ class BMI270 {
 
             digitalWrite(busData->csPin, LOW);
 
-            SPI.transfer(0x80 | addr);
+            busData->spi->transfer(0x80 | addr);
 
             for (auto k = 0; k < count; k++) {
-                data[k] = SPI.transfer(0);
+                data[k] = busData->spi->transfer(0);
             }
 
             digitalWrite(busData->csPin, HIGH);
@@ -190,10 +190,10 @@ class BMI270 {
 
             digitalWrite(busData->csPin, LOW);
 
-            SPI.transfer(addr);
+            busData->spi->transfer(addr);
 
             for (auto k = 0; k < count; k++) {
-                SPI.transfer(data[k]);
+                busData->spi->transfer(data[k]);
             }
 
             digitalWrite(busData->csPin, HIGH);
