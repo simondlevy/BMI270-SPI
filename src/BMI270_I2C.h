@@ -37,7 +37,7 @@ class BMI270 {
             : BMI270()
         {
             m_busData.wire = &wire;
-            m_busData.addr = 0x68;
+            m_busData.devAddr = 0x68;
             m_busData.csPin = 0;
 
             m_bmi2.intf = BMI2_I2C_INTF;
@@ -118,7 +118,7 @@ class BMI270 {
             uint8_t csPin;
 
             TwoWire * wire;
-            uint8_t addr;
+            uint8_t devAddr;
 
         } busData_t;
 
@@ -243,13 +243,30 @@ class BMI270 {
                 const uint32_t count,
                 void * intf_ptr)
         {
+            uint8_t result = 0;
+
             busData_t * busData = (busData_t *)intf_ptr;
 
             TwoWire * wire = busData->wire;
+            const uint8_t devAddr = busData->devAddr;
 
-            (void)busData;
+            wire->beginTransmission(devAddr);
 
-            return 0;
+            wire->write(reg);
+
+            if (wire->endTransmission() == 0) {
+
+                const uint8_t bytes_received = wire->requestFrom(devAddr, count);
+
+                for (auto k = 0; k < bytes_received; k++) {
+                    data[k] = wire->read();
+                }
+
+            } else {
+                result = -1;
+            }
+
+            return result;
         }
 
         static int8_t i2c_write(
@@ -258,11 +275,30 @@ class BMI270 {
                 uint32_t count,
                 void *intf_ptr)
         {
+            uint8_t result = 0;
+
             busData_t * busData = (busData_t *)intf_ptr;
 
-            (void)busData;
+            TwoWire * wire = busData->wire;
+            const uint8_t devAddr = busData->devAddr;
 
-            return 0;
+            wire->beginTransmission(devAddr);
+
+            wire->write(reg);
+
+            if (wire->endTransmission() == 0) {
+
+                const uint8_t bytes_received = wire->requestFrom(devAddr, count);
+
+                for (auto k = 0; k < bytes_received; k++) {
+                    wire->write(data[k]);
+                }
+
+            } else {
+                result = -1;
+            }
+
+            return result;
         }
 
 }; // class BMI270

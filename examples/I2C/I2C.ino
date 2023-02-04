@@ -22,8 +22,8 @@ static void handleInterrupt(void)
 
 static BMI270 imu = BMI270(Wire);
 
-void setup() {
-
+void setup(void)
+{
     Serial.begin(115200);
 
     Wire.begin();
@@ -33,7 +33,7 @@ void setup() {
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
 
-void loop() 
+void loop(void) 
 {
     if (gotInterrupt) {
 

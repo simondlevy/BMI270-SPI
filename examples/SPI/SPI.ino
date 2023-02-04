@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include <BMI270.h>
+#include <BMI270_SPI.h>
 
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
@@ -23,8 +23,8 @@ static void handleInterrupt(void)
 
 static BMI270 imu = BMI270(SPI, CS_PIN);
 
-void setup() {
-
+void setup(void)
+{
     Serial.begin(115200);
 
     SPI.begin();
@@ -34,7 +34,7 @@ void setup() {
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
 }
 
-void loop() 
+void loop(void) 
 {
     if (gotInterrupt) {
 
