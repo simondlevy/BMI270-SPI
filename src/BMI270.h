@@ -34,8 +34,15 @@ class BMI270 {
 
         void begin(void)
         {
-            pinMode(m_busData.csPin, OUTPUT);
-            digitalWrite(m_busData.csPin, HIGH);
+            // I^2C
+            if (m_busData.csPin == 0) {
+            }
+
+            // SPI
+            else {
+                pinMode(m_busData.csPin, OUTPUT);
+                digitalWrite(m_busData.csPin, HIGH);
+            }
 
             checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
