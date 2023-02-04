@@ -13,7 +13,6 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include <Wire.h>
 
 #include "api/bmi270.h"
 
@@ -33,36 +32,16 @@ class BMI270 {
             m_bmi2.write = spi_write;
         }
 
-        BMI270(TwoWire & wire)
-            : BMI270()
-        {
-            m_busData.wire = &wire;
-            m_busData.devAddr = 0x68;
-            m_busData.csPin = 0;
-
-            m_bmi2.intf = BMI2_I2C_INTF;
-
-            m_bmi2.read = i2c_read;
-            m_bmi2.write = i2c_write;
-        }
-
         void begin(void)
         {
-            // I^2C
-            if (m_busData.csPin == 0) {
-            }
-
-            // SPI
-            else {
-                pinMode(m_busData.csPin, OUTPUT);
-                digitalWrite(m_busData.csPin, HIGH);
-            }
+            pinMode(m_busData.csPin, OUTPUT);
+            digitalWrite(m_busData.csPin, HIGH);
 
             checkResult(bmi270_init(&m_bmi2), "bmi270_init");
 
             checkResult(
                     bmi2_set_sensor_config(m_config, 2, &m_bmi2), "bmi2_set_sensor_config");
-        
+
             uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
 
             checkResult(
@@ -116,9 +95,6 @@ class BMI270 {
 
             SPIClass * spi;
             uint8_t csPin;
-
-            TwoWire * wire;
-            uint8_t devAddr;
 
         } busData_t;
 
@@ -235,70 +211,6 @@ class BMI270 {
             digitalWrite(csPin, HIGH);
 
             return 0;
-        }
-
-        static int8_t i2c_read(
-                const uint8_t reg,
-                uint8_t * data,
-                const uint32_t count,
-                void * intf_ptr)
-        {
-            uint8_t result = 0;
-
-            busData_t * busData = (busData_t *)intf_ptr;
-
-            TwoWire * wire = busData->wire;
-            const uint8_t devAddr = busData->devAddr;
-
-            wire->beginTransmission(devAddr);
-
-            wire->write(reg);
-
-            if (wire->endTransmission() == 0) {
-
-                const uint8_t bytes_received = wire->requestFrom(devAddr, count);
-
-                for (auto k = 0; k < bytes_received; k++) {
-                    data[k] = wire->read();
-                }
-
-            } else {
-                result = -1;
-            }
-
-            return result;
-        }
-
-        static int8_t i2c_write(
-                uint8_t reg,
-                const uint8_t *data,
-                uint32_t count,
-                void *intf_ptr)
-        {
-            uint8_t result = 0;
-
-            busData_t * busData = (busData_t *)intf_ptr;
-
-            TwoWire * wire = busData->wire;
-            const uint8_t devAddr = busData->devAddr;
-
-            wire->beginTransmission(devAddr);
-
-            wire->write(reg);
-
-            if (wire->endTransmission() == 0) {
-
-                const uint8_t bytes_received = wire->requestFrom(devAddr, count);
-
-                for (auto k = 0; k < bytes_received; k++) {
-                    wire->write(data[k]);
-                }
-
-            } else {
-                result = -1;
-            }
-
-            return result;
         }
 
 }; // class BMI270
