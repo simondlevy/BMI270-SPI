@@ -37,6 +37,7 @@ class BMI270 {
             : BMI270()
         {
             m_busData.wire = &wire;
+            m_busData.addr = 0x68;
             m_busData.csPin = 0;
 
             m_bmi2.intf = BMI2_I2C_INTF;
@@ -115,7 +116,9 @@ class BMI270 {
 
             SPIClass * spi;
             uint8_t csPin;
+
             TwoWire * wire;
+            uint8_t addr;
 
         } busData_t;
 
@@ -194,15 +197,18 @@ class BMI270 {
         {
             busData_t * busData = (busData_t *)intf_ptr;
 
-            digitalWrite(busData->csPin, LOW);
+            SPIClass * spi = busData->spi;
+            uint8_t csPin = busData->csPin;
 
-            busData->spi->transfer(0x80 | addr);
+            digitalWrite(csPin, LOW);
+
+            spi->transfer(0x80 | addr);
 
             for (auto k = 0; k < count; k++) {
-                data[k] = busData->spi->transfer(0);
+                data[k] = spi->transfer(0);
             }
 
-            digitalWrite(busData->csPin, HIGH);
+            digitalWrite(csPin, HIGH);
 
             return 0;
         }
@@ -215,15 +221,18 @@ class BMI270 {
         {
             busData_t * busData = (busData_t *)intf_ptr;
 
-            digitalWrite(busData->csPin, LOW);
+            SPIClass * spi = busData->spi;
+            uint8_t csPin = busData->csPin;
 
-            busData->spi->transfer(addr);
+            digitalWrite(csPin, LOW);
+
+            spi->transfer(addr);
 
             for (auto k = 0; k < count; k++) {
-                busData->spi->transfer(data[k]);
+                spi->transfer(data[k]);
             }
 
-            digitalWrite(busData->csPin, HIGH);
+            digitalWrite(csPin, HIGH);
 
             return 0;
         }
