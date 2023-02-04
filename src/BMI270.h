@@ -15,6 +15,7 @@ class BMI270 {
 
     public:
 
+        uint8_t sens_list[2] = {BMI2_ACCEL, BMI2_GYRO};
         struct bmi2_sens_config config[3];
         struct bmi2_dev bmi2;
 
