@@ -20,7 +20,7 @@ class BMI270 {
 
     public:
 
-        BMI270(SPIClass & spi, const uint8_t csPin)
+        BMI270(const uint8_t csPin, SPIClass & spi = SPI)
             : BMI270()
         {
             m_busData.spi = &spi;

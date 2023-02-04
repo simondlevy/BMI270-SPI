@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include <BMI270_SPI.h>
+#include "BMI270.h"
 
 static const uint8_t CS_PIN  = 5;
 static const uint8_t INT_PIN = 22;
@@ -21,7 +21,7 @@ static void handleInterrupt(void)
     gotInterrupt = true;
 }
 
-static BMI270 imu = BMI270(SPI, CS_PIN);
+static BMI270 imu = BMI270(CS_PIN);
 
 void setup(void)
 {
