@@ -55,6 +55,8 @@ class BMI270 {
         {
             pinMode(CS_PIN, OUTPUT);
             digitalWrite(CS_PIN, HIGH);
+
+            checkResult(bmi270_init(&bmi2), "bmi270_init");
         }
 
         static void checkResult(const int8_t rslt, const char * funname)

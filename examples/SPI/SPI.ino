@@ -26,8 +26,6 @@ void setup() {
 
     imu.begin();
 
-    BMI270::checkResult(bmi270_init(&imu.bmi2), "bmi270_init");
-
     BMI270::checkResult(
             bmi2_set_sensor_config(imu.config, 2, &imu.bmi2), "bmi2_set_sensor_config");
 
