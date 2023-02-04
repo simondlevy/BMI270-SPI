@@ -190,7 +190,7 @@ class BMI270 {
         }
 
         static int8_t spi_read(
-                const uint8_t addr,
+                const uint8_t reg,
                 uint8_t * data,
                 const uint32_t count,
                 void * intf_ptr)
@@ -198,11 +198,11 @@ class BMI270 {
             busData_t * busData = (busData_t *)intf_ptr;
 
             SPIClass * spi = busData->spi;
-            uint8_t csPin = busData->csPin;
+            const uint8_t csPin = busData->csPin;
 
             digitalWrite(csPin, LOW);
 
-            spi->transfer(0x80 | addr);
+            spi->transfer(0x80 | reg);
 
             for (auto k = 0; k < count; k++) {
                 data[k] = spi->transfer(0);
@@ -214,7 +214,7 @@ class BMI270 {
         }
 
         static int8_t spi_write(
-                uint8_t addr,
+                uint8_t reg,
                 const uint8_t *data,
                 uint32_t count,
                 void *intf_ptr)
@@ -222,11 +222,11 @@ class BMI270 {
             busData_t * busData = (busData_t *)intf_ptr;
 
             SPIClass * spi = busData->spi;
-            uint8_t csPin = busData->csPin;
+            const uint8_t csPin = busData->csPin;
 
             digitalWrite(csPin, LOW);
 
-            spi->transfer(addr);
+            spi->transfer(reg);
 
             for (auto k = 0; k < count; k++) {
                 spi->transfer(data[k]);
@@ -238,12 +238,14 @@ class BMI270 {
         }
 
         static int8_t i2c_read(
-                const uint8_t addr,
+                const uint8_t reg,
                 uint8_t * data,
                 const uint32_t count,
                 void * intf_ptr)
         {
             busData_t * busData = (busData_t *)intf_ptr;
+
+            TwoWire * wire = busData->wire;
 
             (void)busData;
 
@@ -251,7 +253,7 @@ class BMI270 {
         }
 
         static int8_t i2c_write(
-                uint8_t addr,
+                uint8_t reg,
                 const uint8_t *data,
                 uint32_t count,
                 void *intf_ptr)
