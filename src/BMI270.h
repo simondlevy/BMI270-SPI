@@ -68,7 +68,12 @@ class BMI270 {
 
         } accelRange_e;
 
-        BMI270(const uint8_t csPin)
+        BMI270(
+                const uint8_t csPin,
+                const accelRange_e accelRange = ACCEL_RANGE_2_G,
+                const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
+                const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
+                const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
             : BMI270()
         {
             m_busData.spi = &SPI;
@@ -80,7 +85,13 @@ class BMI270 {
             m_bmi2.write = spi_write;
         }
 
-        BMI270(SPIClass & spi, const uint8_t csPin)
+        BMI270(
+                SPIClass & spi,
+                const uint8_t csPin,
+                const accelRange_e accelRange = ACCEL_RANGE_2_G,
+                const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
+                const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
+                const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
             : BMI270()
         {
             m_busData.spi = &spi;
