@@ -74,15 +74,8 @@ class BMI270 {
                 const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
                 const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
                 const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
-            : BMI270()
         {
-            m_busData.spi = &SPI;
-            m_busData.csPin = csPin;
-
-            m_bmi2.intf = BMI2_SPI_INTF;
-
-            m_bmi2.read = spi_read;
-            m_bmi2.write = spi_write;
+            init(&SPI, csPin, accelRange, accelOdr, gyroRange, gyroOdr);
         }
 
         BMI270(
@@ -92,15 +85,8 @@ class BMI270 {
                 const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
                 const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
                 const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
-            : BMI270()
         {
-            m_busData.spi = &spi;
-            m_busData.csPin = csPin;
-
-            m_bmi2.intf = BMI2_SPI_INTF;
-
-            m_bmi2.read = spi_read;
-            m_bmi2.write = spi_write;
+            init(&spi, csPin, accelRange, accelOdr, gyroRange, gyroOdr);
         }
 
         void begin(void)
@@ -187,12 +173,24 @@ class BMI270 {
 
         busData_t m_busData;
 
-        BMI270(
-                const accelRange_e accelRange = ACCEL_RANGE_2_G,
-                const accelOdr_e accelOdr = ACCEL_ODR_100_HZ,
-                const gyroRange_e gyroRange = GYRO_RANGE_2000_DPS,
-                const gyroOdr_e gyroOdr = GYRO_ODR_100_HZ)
+        void init(
+                SPIClass * spi,
+                const uint8_t csPin,
+                const accelRange_e accelRange,
+                const accelOdr_e accelOdr,
+                const gyroRange_e gyroRange,
+                const gyroOdr_e gyroOdr)
         {
+
+            m_busData.spi = spi;
+
+            m_busData.csPin = csPin;
+
+            m_bmi2.intf = BMI2_SPI_INTF;
+
+            m_bmi2.read = spi_read;
+            m_bmi2.write = spi_write;
+
             m_config[0].type = BMI2_ACCEL;
             m_config[0].cfg.acc.odr = accelOdr;
             m_config[0].cfg.acc.range = accelRange;
