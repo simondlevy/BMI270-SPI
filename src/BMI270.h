@@ -68,7 +68,19 @@ class BMI270 {
 
         } accelRange_e;
 
-        BMI270(const uint8_t csPin, SPIClass & spi = SPI)
+        BMI270(const uint8_t csPin)
+            : BMI270()
+        {
+            m_busData.spi = &SPI;
+            m_busData.csPin = csPin;
+
+            m_bmi2.intf = BMI2_SPI_INTF;
+
+            m_bmi2.read = spi_read;
+            m_bmi2.write = spi_write;
+        }
+
+        BMI270(SPIClass & spi, const uint8_t csPin)
             : BMI270()
         {
             m_busData.spi = &spi;

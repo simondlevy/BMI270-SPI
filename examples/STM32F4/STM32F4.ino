@@ -27,7 +27,7 @@ static void handleInterrupt(void)
     gotInterrupt = true;
 }
 
-static BMI270 imu = BMI270(CS_PIN, spi);
+static BMI270 imu = BMI270(spi, CS_PIN);
 
 static void blinkLed(void)
 {
