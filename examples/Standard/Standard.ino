@@ -22,6 +22,15 @@ static void handleInterrupt(void)
 
 static BMI270 imu = BMI270(CS_PIN);
 
+static void printval(const int16_t val, const char * label)
+{
+    Serial.print(label);
+    Serial.print("=");
+    char tmp[10];
+    sprintf(tmp, "%+06d  ", val);
+    Serial.print(tmp);
+}
+
 void setup(void)
 {
     Serial.begin(115200);
@@ -41,19 +50,13 @@ void loop(void)
 
         imu.readSensor();
 
-        Serial.print("ax=");
-        Serial.print(imu.getAccelX());
-        Serial.print("  ay=");
-        Serial.print(imu.getAccelY());
-        Serial.print("  az=");
-        Serial.print(imu.getAccelZ());
+        printval(imu.getAccelX(), "ax");
+        printval(imu.getAccelY(), "ay");
+        printval(imu.getAccelZ(), "az");
 
-        Serial.print("  gx=");
-        Serial.print(imu.getGyroX());
-        Serial.print("  gy=");
-        Serial.print(imu.getGyroY());
-        Serial.print("  gz=");
-        Serial.print(imu.getGyroZ());
+        printval(imu.getGyroX(), "gx");
+        printval(imu.getGyroY(), "gy");
+        printval(imu.getGyroZ(), "gz");
 
         Serial.println();
     }
