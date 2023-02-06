@@ -126,32 +126,32 @@ class BMI270 {
             bmi2_get_sensor_data(&m_sensorData, &m_bmi2);
         }
 
-        int16_t getAccelX(void)
+        int16_t getRawAccelX(void)
         {
             return m_sensorData.acc.x;
         }
 
-        int16_t getAccelY(void)
+        int16_t getRawAccelY(void)
         {
             return m_sensorData.acc.y;
         }
 
-        int16_t getAccelZ(void)
+        int16_t getRawAccelZ(void)
         {
             return m_sensorData.acc.z;
         }
 
-        int16_t getGyroX(void)
+        int16_t getRawGyroX(void)
         {
             return m_sensorData.gyr.x;
         }
 
-        int16_t getGyroY(void)
+        int16_t getRawGyroY(void)
         {
             return m_sensorData.gyr.y;
         }
 
-        int16_t getGyroZ(void)
+        int16_t getRawGyroZ(void)
         {
             return m_sensorData.gyr.z;
         }

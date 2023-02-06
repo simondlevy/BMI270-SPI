@@ -50,13 +50,13 @@ void loop(void)
 
         imu.readSensor();
 
-        printval(imu.getAccelX(), "ax");
-        printval(imu.getAccelY(), "ay");
-        printval(imu.getAccelZ(), "az");
+        printval(imu.getRawAccelX(), "ax");
+        printval(imu.getRawAccelY(), "ay");
+        printval(imu.getRawAccelZ(), "az");
 
-        printval(imu.getGyroX(), "gx");
-        printval(imu.getGyroY(), "gy");
-        printval(imu.getGyroZ(), "gz");
+        printval(imu.getRawGyroX(), "gx");
+        printval(imu.getRawGyroY(), "gy");
+        printval(imu.getRawGyroZ(), "gz");
 
         Serial.println();
     }
