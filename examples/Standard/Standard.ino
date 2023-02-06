@@ -10,8 +10,8 @@
 
 #include "BMI270.h"
 
-static const uint8_t CS_PIN  = 5;
-static const uint8_t INT_PIN = 22;
+static const uint8_t CS_PIN  = 10;
+static const uint8_t INT_PIN = 9;
 
 static bool gotInterrupt;
 

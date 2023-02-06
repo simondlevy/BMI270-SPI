@@ -246,7 +246,7 @@ class BMI270 {
 
             spi->transfer(0x80 | reg);
 
-            for (auto k = 0; k < count; k++) {
+            for (uint32_t k=0; k<count; k++) {
                 data[k] = spi->transfer(0);
             }
 
@@ -270,7 +270,7 @@ class BMI270 {
 
             spi->transfer(reg);
 
-            for (auto k = 0; k < count; k++) {
+            for (uint32_t k=0; k<count; k++) {
                 spi->transfer(data[k]);
             }
 
