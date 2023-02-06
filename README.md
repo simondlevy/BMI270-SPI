@@ -2,7 +2,7 @@
 ## About
 
 This is a simple, header-only Arduino library for the Bosch BMI270 inertial
-measurement units using the SPI bus.  
+measurement unit using the SPI bus.  
 
 ## Use cases
 
