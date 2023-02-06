@@ -11,6 +11,9 @@ I have tested this library on the following hardware:
 * [MikroE 6DOF IMU 12 Click](https://www.mikroe.com/6dof-imu-12-click)
 with [TinyPICO](https://www.tinypico.com/) ESP32 development board.
 
+* MikroE 6DOF IMU 12 ClickJ with [Teensy4.0](https://www.pjrc.com/store/teensy40.html/) development board.
+
+
 
 * [GEPRC-12A-F4 Flight Controller](https://geprc.com/product/gep-12a-f4-flight-controller-12a-esc/)
 
