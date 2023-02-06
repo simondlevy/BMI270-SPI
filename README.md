@@ -1,3 +1,4 @@
+<a href="https://www.mikroe.com/6dof-imu-12-click"><img src="image.jpg" width=500></a>
 
 ## About
 
