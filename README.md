@@ -19,3 +19,7 @@ with [TinyPICO](https://www.tinypico.com/) ESP32 development board.
 
 Note that for the MirkoE board you have to remove the zero-Ohm resistors on the
 MikroE's I<sup>2</sup> pads and solder a bridge across the adjacent SPI pads.
+
+## Related projects
+
+[Arduino\_BMI270\_BMM150](https://github.com/arduino-libraries/Arduino_BMI270_BMM150)
