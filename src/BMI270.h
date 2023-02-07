@@ -41,7 +41,7 @@ class BMI270 {
             GYRO_RANGE_125_DPS
 
         } gyroRange_e;
-        
+
         typedef enum {
 
             ACCEL_ODR_0_78_HZ = 1,
@@ -212,7 +212,7 @@ class BMI270 {
             // file address is assigned in bmi270_init
             m_bmi2.config_file_ptr = NULL;
 
-       }
+        }
 
         static void delay_usec(uint32_t period_us, void * intf_ptr)
         {
@@ -223,10 +223,50 @@ class BMI270 {
 
         static void checkResult(const int8_t rslt, const char * funname)
         {
+            static constexpr char * ERROR_STRINGS[34] = {
+
+                "NULL_PTR",
+                "COM_FAIL",
+                "DEV_NOT_FOUND",
+                "OUT_OF_RANGE",
+                "ACC_INVALID_CFG",
+                "GYRO_INVALID_CFG",
+                "ACC_GYR_INVALID_CFG",
+                "INVALID_SENSOR",
+                "CONFIG_LOAD",
+                "INVALID_PAGE",
+                "INVALID_FEAT_BIT",
+                "INVALID_INT_PIN",
+                "SET_APS_FAIL",
+                "AUX_INVALID_CFG",
+                "AUX_BUSY",
+                "SELF_TEST_FAIL",
+                "REMAP_ERROR",
+                "GYR_USER_GAIN_UPD_FAIL",
+                "SELF_TEST_NOT_DONE",
+                "INVALID_INPUT",
+                "INVALID_STATUS",
+                "CRT_ERROR",
+                "ST_ALREADY_RUNNING",
+                "CRT_READY_FOR_DL_FAIL_ABORT",
+                "DL_ERROR",
+                "PRECON_ERROR",
+                "ABORT_ERROR",
+                "GYRO_SELF_TEST_ERROR",
+                "GYRO_SELF_TEST_TIMEOUT",
+                "WRITE_CYCLE_ONGOING",
+                "WRITE_CYCLE_TIMEOUT",
+                "ST_NOT_RUNING",
+                "DATA_RDY_INT_FAILED",
+                "INVALID_FOC_POSITION"
+            };
+
             while (rslt) {
                 Serial.print(funname);
                 Serial.print(" failed with code ");
-                Serial.println(rslt);
+                Serial.print(rslt);
+                Serial.print(": ");
+                Serial.println(ERROR_STRINGS[-rslt - 1]);
                 delay(500);
             }
         }
