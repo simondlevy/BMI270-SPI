@@ -16,7 +16,10 @@ static const uint8_t SCLK_PIN = PA5;
 
 static const uint8_t LED_PIN = PC13;
 static const uint8_t CS_PIN  = PA4;
-static const uint8_t INT_PIN = PA1;
+
+
+// Set to 0 for polling
+static const uint8_t INT_PIN = 0; // PA1;
 
 static SPIClass spi = SPIClass(MOSI_PIN, MISO_PIN, SCLK_PIN);
 
@@ -42,6 +45,24 @@ static void blinkLed(void)
     }
 }
 
+static void reboot(void)
+{
+    __enable_irq();
+    HAL_RCC_DeInit();
+    HAL_DeInit();
+    SysTick->CTRL = SysTick->LOAD = SysTick->VAL = 0;
+    __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
+
+    const uint32_t p = (*((uint32_t *) 0x1FFF0000));
+    __set_MSP( p );
+
+    void (*SysMemBootJump)(void);
+    SysMemBootJump = (void (*)(void)) (*((uint32_t *) 0x1FFF0004));
+    SysMemBootJump();
+
+    NVIC_SystemReset();
+}
+
 void setup(void)
 {
     Serial.begin(115200);
@@ -52,14 +73,20 @@ void setup(void)
 
     imu.begin();
 
-    attachInterrupt(INT_PIN, handleInterrupt, RISING);
+    if (INT_PIN > 0) {
+        attachInterrupt(INT_PIN, handleInterrupt, RISING);
+    }
 }
 
 void loop(void) 
 {
     blinkLed();
 
-    if (gotInterrupt) {
+    if (Serial.available() && Serial.read() == 'R') {
+        reboot();
+    }
+
+    if (INT_PIN == 0 || gotInterrupt) {
 
         gotInterrupt = false;
 
