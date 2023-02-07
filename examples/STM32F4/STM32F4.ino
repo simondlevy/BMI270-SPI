@@ -19,7 +19,7 @@ static const uint8_t CS_PIN  = PA4;
 
 
 // Set to 0 for polling
-static const uint8_t INT_PIN = 0; // PA1;
+static const uint8_t INT_PIN = PA1;
 
 static SPIClass spi = SPIClass(MOSI_PIN, MISO_PIN, SCLK_PIN);
 
@@ -60,6 +60,8 @@ static void reboot(void)
     SysMemBootJump = (void (*)(void)) (*((uint32_t *) 0x1FFF0004));
     SysMemBootJump();
 
+    __disable_irq();
+
     NVIC_SystemReset();
 }
 
@@ -83,6 +85,8 @@ void loop(void)
     blinkLed();
 
     if (Serial.available() && Serial.read() == 'R') {
+        detachInterrupt(INT_PIN);
+        delay(10);
         reboot();
     }
 
